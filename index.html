@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Kai Ika – Daily Operations Report</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- React -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            kaiBurgundy: '#6B1F1F',
+            kaiGreen: '#3E5C48',
+            kaiYellow: '#F2E6D8',
+            kaiBlue: '#1F3A5F'
+          },
+          fontFamily: {
+            serif: ['Playfair Display', 'serif'],
+            sans: ['Inter', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-kaiYellow font-sans">
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useEffect } = React;
+
+const PRODUCTS = [
+  "Blue Nose (Lg)","Blue Nose (Sml)","Coke","Coke Zero","Crispy Batter",
+  "Donation","Gurnard","Hapuku (Lg)","Hapuku (Sml)","John Dory","Kahawai",
+  "Tee Shirt","King Fillet","King Steaked","Knife - Gill & Gut",
+  "Knife - Set","Knife - Filleting","Knife - Skinning",
+  "Knife - Steaking","L&P","Mackeral","Mahi","Marlin (Lg)",
+  "Marlin (Sml)","Panko batter","Shake n Bake batter","Knife sharpening",
+  "Sistema 3.8L","Snapper","SNA Scale & Fillet","SNA Scale Gut & Gill",
+  "SNA Scale only","Sprite","Tarakihi","Tempura Batter","Trevally",
+  "Tuna (Lg)","Tuna (Med)","Tuna (Sml)"
+];
+
+const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay"];
+const TASKS = ["Filleting","Distributions","Scotts","Cans","Other"];
+
+const DISTRIBUTION_LOCATIONS = [
+  "Local School",
+  "Community Center",
+  "Food Bank",
+  "Marae",
+  "Church",
+  "Youth Center",
+  "Senior Center"
+];
+
+const CANS_LOCATIONS = [
+  "Depot A",
+  "Depot B",
+  "Main Depot",
+  "Recycling Center"
+];
+
+function App() {
+  const [webAppUrl, setWebAppUrl] = useState(localStorage.getItem("opsWebAppUrl") || "");
+  const [configured, setConfigured] = useState(!!localStorage.getItem("opsWebAppUrl"));
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
+  // Permanent fields
+  const [date, setDate] = useState(new Date().toISOString().slice(0,10));
+  const [formCompletedBy, setFormCompletedBy] = useState("");
+  const [totalSales, setTotalSales] = useState("");
+
+  // Expandable sections
+  const [staffRows, setStaffRows] = useState([]);
+  const [salesRows, setSalesRows] = useState([]);
+  const [distributionRows, setDistributionRows] = useState([]);
+  const [cansRows, setCansRows] = useState([]);
+
+  // Section visibility
+  const [showStaff, setShowStaff] = useState(false);
+  const [showSales, setShowSales] = useState(false);
+  const [showDistributions, setShowDistributions] = useState(false);
+  const [showCans, setShowCans] = useState(false);
+
+  // Load saved data on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("opsFormData");
+    if (saved) {
+      const data = JSON.parse(saved);
+      setDate(data.date || new Date().toISOString().slice(0,10));
+      setFormCompletedBy(data.formCompletedBy || "");
+      setTotalSales(data.totalSales || "");
+      setStaffRows(data.staffRows || []);
+      setSalesRows(data.salesRows || []);
+      setDistributionRows(data.distributionRows || []);
+      setCansRows(data.cansRows || []);
+      setShowStaff(data.staffRows?.length > 0);
+      setShowSales(data.salesRows?.length > 0);
+      setShowDistributions(data.distributionRows?.length > 0);
+      setShowCans(data.cansRows?.length > 0);
+    }
+  }, []);
+
+  // Autosave
+  useEffect(() => {
+    localStorage.setItem("opsFormData", JSON.stringify({
+      date, formCompletedBy, totalSales, staffRows, salesRows, distributionRows, cansRows
+    }));
+  }, [date, formCompletedBy, totalSales, staffRows, salesRows, distributionRows, cansRows]);
+
+  const addStaff = () => {
+    setStaffRows([...staffRows, { staffName: "", task: "Filleting", startTime: "", endTime: "" }]);
+    setShowStaff(true);
+  };
+
+  const addSales = () => {
+    setSalesRows([...salesRows, { productName: "", quantity: "" }]);
+    setShowSales(true);
+  };
+
+  const addDistribution = () => {
+    setDistributionRows([...distributionRows, { binsDistributed: "", distributionTo: "" }]);
+    setShowDistributions(true);
+  };
+
+  const addCans = () => {
+    setCansRows([...cansRows, { cansKg: "", cansLocation: "" }]);
+    setShowCans(true);
+  };
+
+  const removeStaff = (idx) => setStaffRows(staffRows.filter((_, i) => i !== idx));
+  const removeSales = (idx) => setSalesRows(salesRows.filter((_, i) => i !== idx));
+  const removeDistribution = (idx) => setDistributionRows(distributionRows.filter((_, i) => i !== idx));
+  const removeCans = (idx) => setCansRows(cansRows.filter((_, i) => i !== idx));
+
+  const submit = async (e) => {
+    e.preventDefault();
+    
+    if (!date || !formCompletedBy) {
+      alert("Please fill in Date and Form Completed By");
+      return;
+    }
+
+    setLoading(true);
+    setSuccess(false);
+
+    try {
+      const fd = new FormData();
+      const timestamp = new Date().toISOString();
+
+      // DAY row
+      fd.append("Row Type", "DAY");
+      fd.append("Date", date);
+      fd.append("Form Completed By", formCompletedBy);
+      fd.append("Submission Timestamp", timestamp);
+      fd.append("Staff Name", "");
+      fd.append("Task", "");
+      fd.append("Start Time", "");
+      fd.append("End Time", "");
+      fd.append("Product Name", "");
+      fd.append("Quantity Sold", "");
+      fd.append("Total Sales", totalSales || "");
+      fd.append("Bins Distributed", "");
+      fd.append("Distribution To", "");
+      fd.append("Cans KG", "");
+      fd.append("Cans Location", "");
+
+      // STAFF rows
+      staffRows.forEach(row => {
+        fd.append("Row Type", "STAFF");
+        fd.append("Date", date);
+        fd.append("Form Completed By", formCompletedBy);
+        fd.append("Submission Timestamp", timestamp);
+        fd.append("Staff Name", row.staffName || "");
+        fd.append("Task", row.task || "");
+        fd.append("Start Time", row.startTime || "");
+        fd.append("End Time", row.endTime || "");
+        fd.append("Product Name", "");
+        fd.append("Quantity Sold", "");
+        fd.append("Total Sales", "");
+        fd.append("Bins Distributed", "");
+        fd.append("Distribution To", "");
+        fd.append("Cans KG", "");
+        fd.append("Cans Location", "");
+      });
+
+      // PRODUCT rows
+      salesRows.forEach(row => {
+        fd.append("Row Type", "PRODUCT");
+        fd.append("Date", date);
+        fd.append("Form Completed By", formCompletedBy);
+        fd.append("Submission Timestamp", timestamp);
+        fd.append("Staff Name", "");
+        fd.append("Task", "");
+        fd.append("Start Time", "");
+        fd.append("End Time", "");
+        fd.append("Product Name", row.productName || "");
+        fd.append("Quantity Sold", row.quantity || "");
+        fd.append("Total Sales", "");
+        fd.append("Bins Distributed", "");
+        fd.append("Distribution To", "");
+        fd.append("Cans KG", "");
+        fd.append("Cans Location", "");
+      });
+
+      // DISTRIBUTION rows
+      distributionRows.forEach(row => {
+        fd.append("Row Type", "DISTRIBUTION");
+        fd.append("Date", date);
+        fd.append("Form Completed By", formCompletedBy);
+        fd.append("Submission Timestamp", timestamp);
+        fd.append("Staff Name", "");
+        fd.append("Task", "");
+        fd.append("Start Time", "");
+        fd.append("End Time", "");
+        fd.append("Product Name", "");
+        fd.append("Quantity Sold", "");
+        fd.append("Total Sales", "");
+        fd.append("Bins Distributed", row.binsDistributed || "");
+        fd.append("Distribution To", row.distributionTo || "");
+        fd.append("Cans KG", "");
+        fd.append("Cans Location", "");
+      });
+
+      // CANS rows
+      cansRows.forEach(row => {
+        fd.append("Row Type", "CANS");
+        fd.append("Date", date);
+        fd.append("Form Completed By", formCompletedBy);
+        fd.append("Submission Timestamp", timestamp);
+        fd.append("Staff Name", "");
+        fd.append("Task", "");
+        fd.append("Start Time", "");
+        fd.append("End Time", "");
+        fd.append("Product Name", "");
+        fd.append("Quantity Sold", "");
+        fd.append("Total Sales", "");
+        fd.append("Bins Distributed", "");
+        fd.append("Distribution To", "");
+        fd.append("Cans KG", row.cansKg || "");
+        fd.append("Cans Location", row.cansLocation || "");
+      });
+
+      const res = await fetch(webAppUrl, { method: "POST", body: fd });
+      const json = await res.json();
+      
+      if (!json.success) throw new Error(json.error);
+
+      setSuccess(true);
+      setTimeout(() => setSuccess(false), 10000);
+      
+      // Clear form
+      setDate(new Date().toISOString().slice(0,10));
+      setFormCompletedBy("");
+      setTotalSales("");
+      setStaffRows([]);
+      setSalesRows([]);
+      setDistributionRows([]);
+      setCansRows([]);
+      setShowStaff(false);
+      setShowSales(false);
+      setShowDistributions(false);
+      setShowCans(false);
+      
+    } catch (err) {
+      alert(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (!configured) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
+          <h1 className="text-3xl font-serif mb-4 text-center text-kaiBurgundy">Initial Setup</h1>
+          <input
+            className="w-full border rounded px-3 py-2 mb-4 font-sans"
+            placeholder="Apps Script Web App URL"
+            value={webAppUrl}
+            onChange={e => setWebAppUrl(e.target.value)}
+          />
+          <button
+            className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
+            onClick={() => {
+              localStorage.setItem("opsWebAppUrl", webAppUrl);
+              setConfigured(true);
+            }}
+          >
+            Save & Continue
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-6xl mx-auto p-0 md:p-0">
+      {/* Header */}
+      <header className="w-full bg-kaiBurgundy text-white flex flex-col items-center py-6 shadow-lg mb-6">
+        <img 
+          src="https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png"
+          alt="Kai Ika Logo"
+          className="h-20 mb-3"
+        />
+        <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Daily Operations Report</h1>
+      </header>
+
+      {success && (
+        <div 
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-50"
+          onClick={() => setSuccess(false)}
+        >
+          ✓ Operations report saved successfully
+        </div>
+      )}
+
+      <form onSubmit={submit} className="space-y-4 px-4 md:px-8">
+        
+        {/* Permanent Fields */}
+        <div className="bg-white p-4 rounded-lg shadow-md">
+          <h2 className="text-2xl font-serif text-kaiBurgundy mb-3">Daily Information</h2>
+          <div className="grid md:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+              <input 
+                type="date" 
+                required
+                className="w-full border rounded px-3 py-2 font-sans" 
+                value={date} 
+                onChange={e => setDate(e.target.value)} 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Form Completed By *</label>
+              <input 
+                type="text" 
+                required
+                placeholder="Your name" 
+                className="w-full border rounded px-3 py-2 font-sans" 
+                value={formCompletedBy} 
+                onChange={e => setFormCompletedBy(e.target.value)} 
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Total Sales ($)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                inputMode="decimal"
+                placeholder="0.00" 
+                className="w-full border rounded px-3 py-2 font-sans" 
+                value={totalSales} 
+                onChange={e => setTotalSales(e.target.value)} 
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3">
+          <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">
+            + Add Staff
+          </button>
+          <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">
+            + Add Sales
+          </button>
+          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">
+            + Add Distribution
+          </button>
+          <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">
+            + Add Cans
+          </button>
+        </div>
+
+        {/* Staff Section */}
+        {showStaff && (
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Staff Hours</h3>
+            <div className="space-y-2">
+              {staffRows.map((row, i) => (
+                <div key={i} className="bg-kaiGreen/10 p-3 rounded-lg relative">
+                  <span 
+                    className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+                    onClick={() => removeStaff(i)}
+                  >✕</span>
+                  <div className="grid md:grid-cols-4 gap-2">
+                    <input 
+                      list="staff" 
+                      placeholder="Staff Name" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.staffName} 
+                      onChange={e => setStaffRows(staffRows.map((r, j) => j === i ? {...r, staffName: e.target.value} : r))} 
+                    />
+                    <select 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.task} 
+                      onChange={e => setStaffRows(staffRows.map((r, j) => j === i ? {...r, task: e.target.value} : r))}
+                    >
+                      {TASKS.map(t => <option key={t}>{t}</option>)}
+                    </select>
+                    <input 
+                      type="time" 
+                      placeholder="Start" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.startTime} 
+                      onChange={e => setStaffRows(staffRows.map((r, j) => j === i ? {...r, startTime: e.target.value} : r))} 
+                    />
+                    <input 
+                      type="time" 
+                      placeholder="End" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.endTime} 
+                      onChange={e => setStaffRows(staffRows.map((r, j) => j === i ? {...r, endTime: e.target.value} : r))} 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Sales Section */}
+        {showSales && (
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Product Sales</h3>
+            <div className="space-y-2">
+              {salesRows.map((row, i) => (
+                <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
+                  <span 
+                    className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+                    onClick={() => removeSales(i)}
+                  >✕</span>
+                  <div className="grid md:grid-cols-3 gap-2">
+                    <input 
+                      list="products" 
+                      placeholder="Product Name" 
+                      className="border rounded px-2 py-2 col-span-2 font-sans" 
+                      value={row.productName} 
+                      onChange={e => setSalesRows(salesRows.map((r, j) => j === i ? {...r, productName: e.target.value} : r))} 
+                    />
+                    <input 
+                      type="number" 
+                      step="1"
+                      inputMode="decimal"
+                      placeholder="Quantity Sold" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.quantity} 
+                      onChange={e => setSalesRows(salesRows.map((r, j) => j === i ? {...r, quantity: e.target.value} : r))} 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Distributions Section */}
+        {showDistributions && (
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Distributions</h3>
+            <div className="space-y-2">
+              {distributionRows.map((row, i) => (
+                <div key={i} className="bg-blue-50 p-3 rounded-lg relative">
+                  <span 
+                    className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+                    onClick={() => removeDistribution(i)}
+                  >✕</span>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    <input 
+                      type="number" 
+                      step="1"
+                      inputMode="decimal"
+                      placeholder="Bins Distributed" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.binsDistributed} 
+                      onChange={e => setDistributionRows(distributionRows.map((r, j) => j === i ? {...r, binsDistributed: e.target.value} : r))} 
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Distribution To (e.g., School, Community Center)" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.distributionTo} 
+                      onChange={e => setDistributionRows(distributionRows.map((r, j) => j === i ? {...r, distributionTo: e.target.value} : r))} 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Cans Section */}
+        {showCans && (
+          <div className="bg-white p-4 rounded-lg shadow-md">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Cans Drop-off</h3>
+            <div className="space-y-2">
+              {cansRows.map((row, i) => (
+                <div key={i} className="bg-orange-50 p-3 rounded-lg relative">
+                  <span 
+                    className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+                    onClick={() => removeCans(i)}
+                  >✕</span>
+                  <div className="grid md:grid-cols-2 gap-2">
+                    <input 
+                      type="number" 
+                      step="0.1"
+                      inputMode="decimal"
+                      placeholder="KG of Cans" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.cansKg} 
+                      onChange={e => setCansRows(cansRows.map((r, j) => j === i ? {...r, cansKg: e.target.value} : r))} 
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Cans Location (e.g., Depot A)" 
+                      className="border rounded px-2 py-2 font-sans" 
+                      value={row.cansLocation} 
+                      onChange={e => setCansRows(cansRows.map((r, j) => j === i ? {...r, cansLocation: e.target.value} : r))} 
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <button 
+          disabled={loading} 
+          type="submit" 
+          className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg"
+        >
+          {loading ? "Saving…" : "Save Operations Report"}
+        </button>
+      </form>
+
+      <datalist id="products">{PRODUCTS.map(p => <option key={p} value={p} />)}</datalist>
+      <datalist id="staff">{STAFF.map(s => <option key={s} value={s} />)}</datalist>
+    </div>
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById("root"));
+</script>
+</body>
+</html>
