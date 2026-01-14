@@ -1,13 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>Kai Ika – Operations Report</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- React -->
   <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
   <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
   <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -34,27 +40,33 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-// === Constants ===
+// ---------------------------
+// CONSTANTS (easy to edit)
+// ---------------------------
 const PRODUCTS = [
   "Blue Nose (Lg)","Blue Nose (Sml)","Coke","Coke Zero","Crispy Batter",
   "Donation","Gurnard","Hapuku (Lg)","Hapuku (Sml)","John Dory","Kahawai",
   "Tee Shirt","King Fillet","King Steaked","Knife - Gill & Gut",
-  "Knife - Set","Knife - Filleting","Knife - Skinning","Knife - Steaking",
-  "L&P","Mackeral","Mahi","Marlin (Lg)","Marlin (Sml)","Panko batter",
-  "Shake n Bake batter","Knife sharpening","Sistema 3.8L","Snapper",
-  "SNA Scale & Fillet","SNA Scale Gut & Gill","SNA Scale only","Sprite",
-  "Tarakihi","Tempura Batter","Trevally","Tuna (Lg)","Tuna (Med)","Tuna (Sml)"
+  "Knife - Set","Knife - Filleting","Knife - Skinning",
+  "Knife - Steaking","L&P","Mackeral","Mahi","Marlin (Lg)",
+  "Marlin (Sml)","Panko batter","Shake n Bake batter","Knife sharpening",
+  "Sistema 3.8L","Snapper","SNA Scale & Fillet","SNA Scale Gut & Gill",
+  "SNA Scale only","Sprite","Tarakihi","Tempura Batter","Trevally",
+  "Tuna (Lg)","Tuna (Med)","Tuna (Sml)"
 ];
 
 const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay"];
 const TASKS = ["Filleting","Distributions","Scotts","Cans","Other"];
-
 const DISTRIBUTION_LOCATIONS = [
   "Local School","Community Center","Food Bank","Marae","Church","Youth Center","Senior Center"
 ];
+const CANS_LOCATIONS = [
+  "Depot A","Depot B","Main Depot","Recycling Center"
+];
 
-const CANS_LOCATIONS = ["Depot A","Depot B","Main Depot","Recycling Center"];
-
+// ---------------------------
+// APP
+// ---------------------------
 function App() {
   const [webAppUrl, setWebAppUrl] = useState(localStorage.getItem("opsWebAppUrl") || "");
   const [configured, setConfigured] = useState(!!localStorage.getItem("opsWebAppUrl"));
@@ -64,15 +76,15 @@ function App() {
   // Permanent fields
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
   const [formCompletedBy, setFormCompletedBy] = useState("");
-  const [totalSales, setTotalSales] = useState("");
 
-  // Expandable sections
+  // Sections
   const [staffRows, setStaffRows] = useState([]);
   const [salesRows, setSalesRows] = useState([]);
   const [distributionRows, setDistributionRows] = useState([]);
   const [cansRows, setCansRows] = useState([]);
+  const [totalSales, setTotalSales] = useState("");
 
-  // Section visibility
+  // Visibility
   const [showStaff, setShowStaff] = useState(false);
   const [showSales, setShowSales] = useState(false);
   const [showDistributions, setShowDistributions] = useState(false);
@@ -81,99 +93,106 @@ function App() {
   // Autosave
   useEffect(() => {
     localStorage.setItem("opsFormData", JSON.stringify({
-      date, formCompletedBy, totalSales,
-      staffRows, salesRows, distributionRows, cansRows
+      date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales
     }));
-  }, [date, formCompletedBy, totalSales, staffRows, salesRows, distributionRows, cansRows]);
+  }, [date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales]);
 
-  // Add / Remove
-  const addStaff = () => { setStaffRows([...staffRows, { staffName:"", task:"Filleting", startTime:"", endTime:"" }]); setShowStaff(true); };
-  const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); };
-  const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); };
-  const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); };
+  // Load saved
+  useEffect(() => {
+    const saved = localStorage.getItem("opsFormData");
+    if(saved){
+      const data = JSON.parse(saved);
+      setDate(data.date || new Date().toISOString().slice(0,10));
+      setFormCompletedBy(data.formCompletedBy || "");
+      setStaffRows(data.staffRows || []);
+      setSalesRows(data.salesRows || []);
+      setDistributionRows(data.distributionRows || []);
+      setCansRows(data.cansRows || []);
+      setTotalSales(data.totalSales || "");
+      setShowStaff(data.staffRows?.length > 0);
+      setShowSales(data.salesRows?.length > 0 || !!data.totalSales);
+      setShowDistributions(data.distributionRows?.length > 0);
+      setShowCans(data.cansRows?.length > 0);
+    }
+  }, []);
 
-  const removeStaff = i => setStaffRows(staffRows.filter((_, idx) => idx!==i));
-  const removeSales = i => setSalesRows(salesRows.filter((_, idx) => idx!==i));
-  const removeDistribution = i => setDistributionRows(distributionRows.filter((_, idx) => idx!==i));
-  const removeCans = i => setCansRows(cansRows.filter((_, idx) => idx!==i));
+  // ---------------------------
+  // ROW MANAGEMENT
+  // ---------------------------
+  const addStaff = () => { setStaffRows([...staffRows, { staffName:"", task:"Filleting", startTime:"", endTime:"" }]); setShowStaff(true); }
+  const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
+  const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); }
+  const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
 
-  // Submit
+  const removeStaff = i => setStaffRows(staffRows.filter((_,j)=>i!==j));
+  const removeSales = i => setSalesRows(salesRows.filter((_,j)=>i!==j));
+  const removeDistribution = i => setDistributionRows(distributionRows.filter((_,j)=>i!==j));
+  const removeCans = i => setCansRows(cansRows.filter((_,j)=>i!==j));
+
+  // ---------------------------
+  // SUBMIT
+  // ---------------------------
   const submit = async e => {
     e.preventDefault();
-    if(!date || !formCompletedBy) { alert("Please fill in Date and Form Completed By"); return; }
+    if(!date || !formCompletedBy){ alert("Date & Form Completed By required"); return; }
+    if(!webAppUrl){ alert("Please configure web app URL"); return; }
 
-    setLoading(true); setSuccess(false);
-    try {
+    setLoading(true);
+    setSuccess(false);
+
+    try{
       const fd = new FormData();
       const timestamp = new Date().toISOString();
 
-      // STAFF rows
-      staffRows.forEach(row => {
+      // STAFF
+      staffRows.forEach(r=>{
         fd.append("Row Type","STAFF");
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Staff Name",row.staffName || "");
-        fd.append("Task",row.task || "");
-        fd.append("Start Time",row.startTime || "");
-        fd.append("End Time",row.endTime || "");
-        fd.append("Hours Worked",""); // calculated in Apps Script
-        fd.append("Product Name","");
-        fd.append("Quantity Sold","");
-        fd.append("Total Sales","");
-        fd.append("Bins Distributed","");
-        fd.append("Distribution To","");
-        fd.append("Cans KG","");
-        fd.append("Cans Location","");
+        fd.append("Staff Name",r.staffName||"");
+        fd.append("Task",r.task||"");
+        fd.append("Start Time",r.startTime||"");
+        fd.append("End Time",r.endTime||"");
       });
 
       // SALES rows
-      salesRows.forEach(row => {
+      salesRows.forEach(r=>{
         fd.append("Row Type","SALES");
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Product Name",row.productName || "");
-        fd.append("Quantity Sold",row.quantity || "");
-        fd.append("Total Sales","");
-        fd.append("Staff Name","");
-        fd.append("Task","");
-        fd.append("Start Time","");
-        fd.append("End Time","");
-        fd.append("Hours Worked","");
-        fd.append("Bins Distributed","");
-        fd.append("Distribution To","");
-        fd.append("CANS KG","");
-        fd.append("Cans Location","");
+        fd.append("Product Name",r.productName||"");
+        fd.append("Quantity Sold",r.quantity||"");
       });
 
-      // TOTAL SALES row
+      // TOTAL SALES
       if(totalSales){
-        fd.append("Row Type","TOTAL_SALES");
+        fd.append("Row Type","SALES_TOTAL");
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
         fd.append("Total Sales",totalSales);
       }
 
-      // DISTRIBUTION rows
-      distributionRows.forEach(row => {
+      // DISTRIBUTION
+      distributionRows.forEach(r=>{
         fd.append("Row Type","DISTRIBUTION");
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Bins Distributed",row.binsDistributed || "");
-        fd.append("Distribution To",row.distributionTo || "");
+        fd.append("Bins Distributed",r.binsDistributed||"");
+        fd.append("Distribution To",r.distributionTo||"");
       });
 
-      // CANS rows
-      cansRows.forEach(row => {
+      // CANS
+      cansRows.forEach(r=>{
         fd.append("Row Type","CANS");
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Cans KG",row.cansKg || "");
-        fd.append("Cans Location",row.cansLocation || "");
+        fd.append("Cans KG",r.cansKg||"");
+        fd.append("Cans Location",r.cansLocation||"");
       });
 
       const res = await fetch(webAppUrl,{method:"POST",body:fd});
@@ -182,122 +201,174 @@ function App() {
 
       setSuccess(true);
       setTimeout(()=>setSuccess(false),10000);
-      // clear rows (except total sales)
-      setStaffRows([]); setSalesRows([]); setDistributionRows([]); setCansRows([]);
-      setShowStaff(false); setShowSales(false); setShowDistributions(false); setShowCans(false);
 
-    } catch(err){ alert(err.message); }
-    finally{ setLoading(false); }
-  };
+      // CLEAR FORM
+      setStaffRows([]);
+      setSalesRows([]);
+      setDistributionRows([]);
+      setCansRows([]);
+      setTotalSales("");
+      setShowStaff(false);
+      setShowSales(false);
+      setShowDistributions(false);
+      setShowCans(false);
 
-  if(!configured){
-    return <div className="min-h-screen flex items-center justify-center p-6">
-      <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
-        <h1 className="text-3xl font-serif mb-4 text-center text-kaiBurgundy">Initial Setup</h1>
-        <input className="w-full border rounded px-3 py-2 mb-4 font-sans" placeholder="Apps Script Web App URL"
-          value={webAppUrl} onChange={e=>setWebAppUrl(e.target.value)} />
-        <button className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
-          onClick={()=>{ localStorage.setItem("opsWebAppUrl",webAppUrl); setConfigured(true); }}>Save & Continue</button>
-      </div>
-    </div>;
+    } catch(err){
+      alert(err.message);
+    } finally{
+      setLoading(false);
+    }
   }
 
-  return (
-    <div className="max-w-6xl mx-auto p-4">
+  // ---------------------------
+  // INITIAL CONFIG
+  // ---------------------------
+  if(!configured){
+    return(
+      <div className="min-h-screen flex items-center justify-center p-6">
+        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
+          <h1 className="text-3xl font-serif mb-4 text-center text-kaiBurgundy">Initial Setup</h1>
+          <input
+            className="w-full border rounded px-3 py-2 mb-4 font-sans"
+            placeholder="Apps Script Web App URL"
+            value={webAppUrl}
+            onChange={e=>setWebAppUrl(e.target.value)}
+          />
+          <button
+            className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
+            onClick={()=>{ localStorage.setItem("opsWebAppUrl",webAppUrl); setConfigured(true); }}
+          >Save & Continue</button>
+        </div>
+      </div>
+    );
+  }
+
+  // ---------------------------
+  // MAIN FORM
+  // ---------------------------
+  return(
+    <div className="max-w-6xl mx-auto p-4 md:p-8">
+      {/* Header */}
       <header className="w-full bg-kaiBurgundy text-white flex flex-col items-center py-6 shadow-lg mb-6">
-        <img src="https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png" alt="Kai Ika Logo" className="h-20 mb-3"/>
+        <img 
+          src="https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png"
+          alt="Kai Ika Logo"
+          className="h-20 mb-3"
+        />
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Operations Report</h1>
       </header>
 
-      {success && <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-50" onClick={()=>setSuccess(false)}>✓ Saved successfully</div>}
+      {success && (
+        <div 
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-50"
+          onClick={()=>setSuccess(false)}
+        >
+          ✓ Report saved successfully
+        </div>
+      )}
 
       <form onSubmit={submit} className="space-y-4">
-        <div className="bg-white p-4 rounded-lg shadow-md">
-          <h2 className="text-2xl font-serif text-kaiBurgundy mb-3">Daily Info</h2>
-          <div className="grid md:grid-cols-3 gap-3">
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
-              <input type="date" required className="w-full border rounded px-3 py-2 font-sans" value={date} onChange={e=>setDate(e.target.value)} /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Form Completed By *</label>
-              <input type="text" placeholder="Your Name" required className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} /></div>
-            <div><label className="block text-sm font-medium text-gray-700 mb-1">Total Sales ($)</label>
-              <input type="number" step="0.01" inputMode="decimal" placeholder="0.00" className="w-full border rounded px-3 py-2 font-sans" value={totalSales} onChange={e=>setTotalSales(e.target.value)} /></div>
+
+        {/* Top info */}
+        <div className="bg-white p-4 rounded-lg shadow-md grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
+            <input type="date" required className="w-full border rounded px-3 py-2 font-sans" value={date} onChange={e=>setDate(e.target.value)} />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Form Completed By *</label>
+            <input type="text" required placeholder="Your name" className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} />
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-3">
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 mb-4">
           <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
           <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
           <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Distribution</button>
           <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Cans</button>
         </div>
 
-        {/* STAFF */}
-        {showStaff && <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-serif text-kaiGreen mb-3">Staff Hours</h3>
-          <div className="space-y-2">{staffRows.map((row,i)=>
-            <div key={i} className="bg-kaiGreen/10 p-3 rounded-lg relative">
-              <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeStaff(i)}>✕</span>
-              <div className="grid md:grid-cols-4 gap-2">
-                <input list="staff" placeholder="Staff Name" className="border rounded px-2 py-2 font-sans" value={row.staffName} onChange={e=>setStaffRows(staffRows.map((r,j)=>j===i?{...r,staffName:e.target.value}:r))}/>
-                <select className="border rounded px-2 py-2 font-sans" value={row.task} onChange={e=>setStaffRows(staffRows.map((r,j)=>j===i?{...r,task:e.target.value}:r))}>{TASKS.map(t=><option key={t}>{t}</option>)}</select>
-                <input type="time" placeholder="Start" className="border rounded px-2 py-2 font-sans" value={row.startTime} onChange={e=>setStaffRows(staffRows.map((r,j)=>j===i?{...r,startTime:e.target.value}:r))}/>
-                <input type="time" placeholder="End" className="border rounded px-2 py-2 font-sans" value={row.endTime} onChange={e=>setStaffRows(staffRows.map((r,j)=>j===i?{...r,endTime:e.target.value}:r))}/>
-              </div>
-            </div>
-          )}</div>
-        </div>}
+        {/* Staff */}
+        {showStaff && <Section title="Staff Hours" rows={staffRows} setRows={setStaffRows} removeRow={removeStaff} inputs={[
+          {label:"Name", value:"staffName", type:"text", list:"staff"},
+          {label:"Task", value:"task", type:"select", options:TASKS},
+          {label:"Start", value:"startTime", type:"time"},
+          {label:"End", value:"endTime", type:"time"}
+        ]} bg="bg-kaiGreen/10"/>}
 
-        {/* SALES */}
-        {showSales && <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-serif text-kaiGreen mb-3">Product Sales</h3>
-          <div className="space-y-2">{salesRows.map((row,i)=>
-            <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
-              <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeSales(i)}>✕</span>
-              <div className="grid md:grid-cols-3 gap-2">
-                <input list="products" placeholder="Product Name" className="border rounded px-2 py-2 col-span-2 font-sans" value={row.productName} onChange={e=>setSalesRows(salesRows.map((r,j)=>j===i?{...r,productName:e.target.value}:r))}/>
-                <input type="number" placeholder="Quantity Sold" className="border rounded px-2 py-2 font-sans" value={row.quantity} onChange={e=>setSalesRows(salesRows.map((r,j)=>j===i?{...r,quantity:e.target.value}:r))}/>
+        {/* Sales */}
+        {showSales && (
+          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Product Sales</h3>
+            {salesRows.map((r,i)=>(
+              <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
+                <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeSales(i)}>✕</span>
+                <div className="grid md:grid-cols-3 gap-2">
+                  <input list="products" placeholder="Product Name" className="border rounded px-2 py-2 col-span-2 font-sans" value={r.productName} onChange={e=>setSalesRows(salesRows.map((row,j)=>j===i?{...row,productName:e.target.value}:row))}/>
+                  <input type="number" placeholder="Quantity Sold" className="border rounded px-2 py-2 font-sans" value={r.quantity} onChange={e=>setSalesRows(salesRows.map((row,j)=>j===i?{...row,quantity:e.target.value}:row))}/>
+                </div>
               </div>
+            ))}
+            {/* Total Sales */}
+            <div className="mt-3">
+              <label className="block mb-1 font-medium text-gray-700">Total Sales ($)</label>
+              <input type="number" step="0.01" inputMode="decimal" placeholder="0.00" className="w-full border rounded px-3 py-2 font-sans" value={totalSales} onChange={e=>setTotalSales(e.target.value)} />
             </div>
-          )}</div>
-        </div>}
+          </div>
+        )}
 
-        {/* DISTRIBUTION */}
-        {showDistributions && <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-serif text-kaiGreen mb-3">Distributions</h3>
-          <div className="space-y-2">{distributionRows.map((row,i)=>
-            <div key={i} className="bg-blue-50 p-3 rounded-lg relative">
-              <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeDistribution(i)}>✕</span>
-              <div className="grid md:grid-cols-2 gap-2">
-                <input type="number" placeholder="Bins Distributed" className="border rounded px-2 py-2 font-sans" value={row.binsDistributed} onChange={e=>setDistributionRows(distributionRows.map((r,j)=>j===i?{...r,binsDistributed:e.target.value}:r))}/>
-                <select className="border rounded px-2 py-2 font-sans" value={row.distributionTo} onChange={e=>setDistributionRows(distributionRows.map((r,j)=>j===i?{...r,distributionTo:e.target.value}:r))}>{DISTRIBUTION_LOCATIONS.map(l=><option key={l}>{l}</option>)}</select>
-              </div>
-            </div>
-          )}</div>
-        </div>}
+        {/* Distribution */}
+        {showDistributions && <Section title="Distributions" rows={distributionRows} setRows={setDistributionRows} removeRow={removeDistribution} inputs={[
+          {label:"Bins Distributed", value:"binsDistributed", type:"number"},
+          {label:"Distribution To", value:"distributionTo", type:"select", options:DISTRIBUTION_LOCATIONS}
+        ]} bg="bg-blue-50"/>}
 
-                {/* CANS */}
-        {showCans && <div className="bg-white p-4 rounded-lg shadow-md">
-          <h3 className="text-xl font-serif text-kaiGreen mb-3">Cans</h3>
-          <div className="space-y-2">{cansRows.map((row,i)=>
-            <div key={i} className="bg-yellow-50 p-3 rounded-lg relative">
-              <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeCans(i)}>✕</span>
-              <div className="grid md:grid-cols-2 gap-2">
-                <input type="number" placeholder="Cans KG" className="border rounded px-2 py-2 font-sans" value={row.cansKg} onChange={e=>setCansRows(cansRows.map((r,j)=>j===i?{...r,cansKg:e.target.value}:r))}/>
-                <select className="border rounded px-2 py-2 font-sans" value={row.cansLocation} onChange={e=>setCansRows(cansRows.map((r,j)=>j===i?{...r,cansLocation:e.target.value}:r))}>{CANS_LOCATIONS.map(l=><option key={l}>{l}</option>)}</select>
-              </div>
-            </div>
-          )}</div>
-        </div>}
+        {/* Cans */}
+        {showCans && <Section title="Cans Drop-off" rows={cansRows} setRows={setCansRows} removeRow={removeCans} inputs={[
+          {label:"KG of Cans", value:"cansKg", type:"number"},
+          {label:"Cans Location", value:"cansLocation", type:"select", options:CANS_LOCATIONS}
+        ]} bg="bg-orange-50"/>}
 
-        <button type="submit" className="mt-4 w-full bg-kaiBurgundy hover:bg-red-700 text-white py-3 rounded-lg font-bold text-lg shadow">{loading ? "Saving..." : "Submit Report"}</button>
+        <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
+          {loading?"Saving…":"Save Operations Report"}
+        </button>
+
       </form>
 
-      <datalist id="products">{PRODUCTS.map(p=><option key={p}>{p}</option>)}</datalist>
-      <datalist id="staff">{STAFF.map(s=><option key={s}>{s}</option>)}</datalist>
-
-      <footer className="mt-8 text-center text-gray-600 text-sm mb-4">© Kai Ika Operations</footer>
+      <datalist id="products">{PRODUCTS.map(p=><option key={p} value={p}/>)}</datalist>
+      <datalist id="staff">{STAFF.map(s=><option key={s} value={s}/>)}</datalist>
     </div>
+  );
+}
+
+// ---------------------------
+// SECTION COMPONENT
+// ---------------------------
+function Section({title,rows,setRows,removeRow,inputs,bg}){
+  return(
+    <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+      <h3 className="text-xl font-serif text-kaiGreen mb-3">{title}</h3>
+      {rows.map((r,i)=>(
+        <div key={i} className={`${bg} p-3 rounded-lg relative`}>
+          <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeRow(i)}>✕</span>
+          <div className={`grid ${inputs.length>1?`md:grid-cols-${inputs.length}`:"md:grid-cols-1"} gap-2`}>
+            {inputs.map(inp=>{
+              if(inp.type==="select"){
+                return <select key={inp.value} value={r[inp.value]} onChange={e=>setRows(rows.map((row,j)=>j===i?{...row,[inp.value]:e.target.value}:row))} className="border rounded px-2 py-2 font-sans">{inp.options.map(opt=><option key={opt} value={opt}>{opt}</option>)}</select>
+              } else {
+                return <input key={inp.value} type={inp.type} placeholder={inp.label} value={r[inp.value]} onChange={e=>setRows(rows.map((row,j)=>j===i?{...row,[inp.value]:e.target.value}:row))} className="border rounded px-2 py-2 font-sans" />
+              }
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
 </script>
 </body>
 </html>
-
