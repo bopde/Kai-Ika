@@ -58,10 +58,10 @@ const PRODUCTS = [
 const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay"];
 const TASKS = ["Filleting","Distributions","Scotts","Cans","Other"];
 const DISTRIBUTION_LOCATIONS = [
-  "Local School","Community Center","Food Bank","Marae","Church","Youth Center","Senior Center"
+  "Akeli","Donald","","Dave","Walk-in","Ōrakei","Māngere"
 ];
 const CANS_LOCATIONS = [
-  "Depot A","Depot B","Main Depot","Recycling Center"
+  "North Shore","Onehunga","Takanini","Otahuhu"
 ];
 
 // ---------------------------
@@ -291,7 +291,7 @@ function App() {
 
         {/* Staff */}
         {showStaff && <Section title="Staff Hours" rows={staffRows} setRows={setStaffRows} removeRow={removeStaff} inputs={[
-          {label:"Name", value:"staffName", type:"text", list:"staff"},
+          {label:"Name", value:"staffName", type:"select", options:STAFF},
           {label:"Task", value:"task", type:"select", options:TASKS},
           {label:"Start", value:"startTime", type:"time"},
           {label:"End", value:"endTime", type:"time"}
