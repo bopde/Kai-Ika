@@ -58,7 +58,7 @@ const PRODUCTS = [
 const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay"];
 const TASKS = ["Filleting","Distributions","Scotts","Cans","Other"];
 const DISTRIBUTION_LOCATIONS = [
-  "Akeli","Donald","","Dave","Walk-in","Ōrakei","Māngere"
+  "Akeli","Donald",","Dave","Walk-in","Ōrakei","Māngere"
 ];
 const CANS_LOCATIONS = [
   "North Shore","Onehunga","Takanini","Otahuhu"
@@ -119,7 +119,7 @@ function App() {
   // ---------------------------
   // ROW MANAGEMENT
   // ---------------------------
-  const addStaff = () => { setStaffRows([...staffRows, { staffName:"", task:"Filleting", startTime:"", endTime:"" }]); setShowStaff(true); }
+  const addStaff = () => { setStaffRows([...staffRows, { staffName:STAFF[0], task:TASKS[0], startTime:"", endTime:"" }]); setShowStaff(true); }
   const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
   const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); }
   const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
