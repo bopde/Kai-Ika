@@ -63,6 +63,9 @@ const DISTRIBUTION_LOCATIONS = [
 const CANS_LOCATIONS = [
   "North Shore","Onehunga","Takanini","Otahuhu"
 ];
+const BIN_SOURCES = [
+  "Westhaven","Hilton","Scott's","Moana"
+];
 
 // ---------------------------
 // APP
@@ -83,19 +86,26 @@ function App() {
   const [distributionRows, setDistributionRows] = useState([]);
   const [cansRows, setCansRows] = useState([]);
   const [totalSales, setTotalSales] = useState("");
+  const [notes, setNotes] = useState("");
+  const [fishMonitored, setFishMonitored] = useState("");
+  const [roeCollected, setRoeCollected] = useState("");
+  const [binsCollected, setBinsCollected] = useState("");
+  const [binSource, setBinSource] = useState("Westhaven");
 
   // Visibility
   const [showStaff, setShowStaff] = useState(false);
   const [showSales, setShowSales] = useState(false);
   const [showDistributions, setShowDistributions] = useState(false);
   const [showCans, setShowCans] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
+  const [showOther, setShowOther] = useState(false);
 
   // Autosave
   useEffect(() => {
     localStorage.setItem("opsFormData", JSON.stringify({
-      date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales
+      date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales, notes, fishMonitored, roeCollected, binsCollected, binSource
     }));
-  }, [date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales]);
+  }, [date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales, notes, fishMonitored, roeCollected, binsCollected, binSource]);
 
   // Load saved
   useEffect(() => {
@@ -109,10 +119,17 @@ function App() {
       setDistributionRows(data.distributionRows || []);
       setCansRows(data.cansRows || []);
       setTotalSales(data.totalSales || "");
+      setNotes(data.notes || "");
+      setFishMonitored(data.fishMonitored || "");
+      setRoeCollected(data.roeCollected || "");
+      setBinsCollected(data.binsCollected || "");
+      setBinSource(data.binSource || "Westhaven");
       setShowStaff(data.staffRows?.length > 0);
       setShowSales(data.salesRows?.length > 0 || !!data.totalSales);
-      setShowDistributions(data.distributionRows?.length > 0);
+      setShowDistributions(data.distributionRows?.length > 0 || !!data.binsCollected);
       setShowCans(data.cansRows?.length > 0);
+      setShowNotes(!!data.notes);
+      setShowOther(!!data.fishMonitored || !!data.roeCollected);
     }
   }, []);
 
@@ -123,6 +140,8 @@ function App() {
   const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
   const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); }
   const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
+  const addNotes = () => { setShowNotes(true); }
+  const addOther = () => { setShowOther(true); }
 
   const removeStaff = i => setStaffRows(staffRows.filter((_,j)=>i!==j));
   const removeSales = i => setSalesRows(salesRows.filter((_,j)=>i!==j));
@@ -175,6 +194,16 @@ function App() {
         fd.append("Total Sales",totalSales);
       }
 
+      // COLLECTION
+      if(binsCollected){
+        fd.append("Row Type","COLLECTION");
+        fd.append("Date",date);
+        fd.append("Form Completed By",formCompletedBy);
+        fd.append("Submission Timestamp",timestamp);
+        fd.append("Bins Collected",binsCollected);
+        fd.append("Source",binSource);
+      }
+
       // DISTRIBUTION
       distributionRows.forEach(r=>{
         fd.append("Row Type","DISTRIBUTION");
@@ -195,6 +224,25 @@ function App() {
         fd.append("Cans Location",r.cansLocation||"");
       });
 
+      // NOTES
+      if(notes){
+        fd.append("Row Type","NOTES");
+        fd.append("Date",date);
+        fd.append("Form Completed By",formCompletedBy);
+        fd.append("Submission Timestamp",timestamp);
+        fd.append("Notes",notes);
+      }
+
+      // OTHER
+      if(fishMonitored || roeCollected){
+        fd.append("Row Type","OTHER");
+        fd.append("Date",date);
+        fd.append("Form Completed By",formCompletedBy);
+        fd.append("Submission Timestamp",timestamp);
+        fd.append("Fish Monitored",fishMonitored||"");
+        fd.append("Roe Collected",roeCollected||"");
+      }
+
       const res = await fetch(webAppUrl,{method:"POST",body:fd});
       const json = await res.json();
       if(!json.success) throw new Error(json.error);
@@ -208,10 +256,17 @@ function App() {
       setDistributionRows([]);
       setCansRows([]);
       setTotalSales("");
+      setNotes("");
+      setFishMonitored("");
+      setRoeCollected("");
+      setBinsCollected("");
+      setBinSource("Westhaven");
       setShowStaff(false);
       setShowSales(false);
       setShowDistributions(false);
       setShowCans(false);
+      setShowNotes(false);
+      setShowOther(false);
 
     } catch(err){
       alert(err.message);
@@ -285,8 +340,10 @@ function App() {
         <div className="flex flex-wrap gap-3 mb-4">
           <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
           <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
-          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Distribution</button>
+          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Bins</button>
           <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Cans</button>
+          <button type="button" onClick={addNotes} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Notes</button>
+          <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
         </div>
 
         {/* Staff */}
@@ -319,16 +376,76 @@ function App() {
         )}
 
         {/* Distribution */}
-        {showDistributions && <Section title="Distributions" rows={distributionRows} setRows={setDistributionRows} removeRow={removeDistribution} inputs={[
-          {label:"Bins Distributed", value:"binsDistributed", type:"number"},
-          {label:"Distribution To", value:"distributionTo", type:"select", options:DISTRIBUTION_LOCATIONS}
-        ]} bg="bg-blue-50"/>}
+        {showDistributions && (
+          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Bins</h3>
+            
+            {/* Bins Collection */}
+            <div className="bg-slate-50 p-3 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Bins Collected</label>
+                  <input type="number" placeholder="Bins Collected" className="w-full border rounded px-2 py-2 font-sans" value={binsCollected} onChange={e=>setBinsCollected(e.target.value)} />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">Source</label>
+                  <select className="w-full border rounded px-2 py-2 font-sans" value={binSource} onChange={e=>setBinSource(e.target.value)}>
+                    {BIN_SOURCES.map(src=><option key={src} value={src}>{src}</option>)}
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Distribution Rows */}
+            {distributionRows.map((r,i)=>(
+              <div key={i} className="bg-blue-50 p-3 rounded-lg relative">
+                <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeDistribution(i)}>✕</span>
+                <div className="grid md:grid-cols-2 gap-2">
+                  <input type="number" placeholder="Bins Distributed" className="border rounded px-2 py-2 font-sans" value={r.binsDistributed} onChange={e=>setDistributionRows(distributionRows.map((row,j)=>j===i?{...row,binsDistributed:e.target.value}:row))} />
+                  <select className="border rounded px-2 py-2 font-sans" value={r.distributionTo} onChange={e=>setDistributionRows(distributionRows.map((row,j)=>j===i?{...row,distributionTo:e.target.value}:row))}>
+                    {DISTRIBUTION_LOCATIONS.map(loc=><option key={loc} value={loc}>{loc}</option>)}
+                  </select>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Cans */}
         {showCans && <Section title="Cans Drop-off" rows={cansRows} setRows={setCansRows} removeRow={removeCans} inputs={[
           {label:"KG of Cans", value:"cansKg", type:"number"},
           {label:"Cans Location", value:"cansLocation", type:"select", options:CANS_LOCATIONS}
         ]} bg="bg-orange-50"/>}
+
+        {/* Notes */}
+        {showNotes && (
+          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Notes</h3>
+            <textarea 
+              placeholder="Enter notes here..." 
+              className="w-full border rounded px-3 py-2 font-sans h-32" 
+              value={notes} 
+              onChange={e=>setNotes(e.target.value)}
+            />
+          </div>
+        )}
+
+        {/* Other */}
+        {showOther && (
+          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Other</h3>
+            <div className="grid md:grid-cols-2 gap-3">
+              <div>
+                <label className="block mb-1 font-medium text-gray-700">Fish Monitored</label>
+                <input type="number" placeholder="Fish Monitored" className="w-full border rounded px-3 py-2 font-sans" value={fishMonitored} onChange={e=>setFishMonitored(e.target.value)} />
+              </div>
+              <div>
+                <label className="block mb-1 font-medium text-gray-700">Roe Collected</label>
+                <input type="number" placeholder="Roe Collected" className="w-full border rounded px-3 py-2 font-sans" value={roeCollected} onChange={e=>setRoeCollected(e.target.value)} />
+              </div>
+            </div>
+          </div>
+        )}
 
         <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
           {loading?"Saving…":"Save Operations Report"}
