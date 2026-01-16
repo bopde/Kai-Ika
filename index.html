@@ -67,6 +67,7 @@ const BIN_SOURCES = [
   "Westhaven","Hilton","Scott's","Moana"
 ];
 
+
 // ---------------------------
 // APP
 // ---------------------------
@@ -75,6 +76,7 @@ function App() {
   const [configured, setConfigured] = useState(!!localStorage.getItem("opsWebAppUrl"));
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   // Permanent fields
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
@@ -97,8 +99,8 @@ function App() {
   const [showSales, setShowSales] = useState(false);
   const [showDistributions, setShowDistributions] = useState(false);
   const [showCans, setShowCans] = useState(false);
-  const [showNotes, setShowNotes] = useState(false);
   const [showOther, setShowOther] = useState(false);
+  const [showNotes, setShowNotes] = useState(false);
 
   // Autosave
   useEffect(() => {
@@ -128,8 +130,8 @@ function App() {
       setShowSales(data.salesRows?.length > 0 || !!data.totalSales);
       setShowDistributions(data.distributionRows?.length > 0 || !!data.binsCollected);
       setShowCans(data.cansRows?.length > 0);
-      setShowNotes(!!data.notes);
       setShowOther(!!data.fishMonitored || !!data.roeCollected);
+      setShowNotes(!!data.notes);
     }
   }, []);
 
@@ -140,8 +142,8 @@ function App() {
   const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
   const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); }
   const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
-  const addNotes = () => { setShowNotes(true); }
   const addOther = () => { setShowOther(true); }
+  const addNotes = () => { setShowNotes(true); }
 
   const removeStaff = i => setStaffRows(staffRows.filter((_,j)=>i!==j));
   const removeSales = i => setSalesRows(salesRows.filter((_,j)=>i!==j));
@@ -224,14 +226,6 @@ function App() {
         fd.append("Cans Location",r.cansLocation||"");
       });
 
-      // NOTES
-      if(notes){
-        fd.append("Row Type","NOTES");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Notes",notes);
-      }
 
       // OTHER
       if(fishMonitored || roeCollected){
@@ -241,6 +235,15 @@ function App() {
         fd.append("Submission Timestamp",timestamp);
         fd.append("Fish Monitored",fishMonitored||"");
         fd.append("Roe Collected",roeCollected||"");
+      }
+
+      // NOTES
+      if(notes){
+        fd.append("Row Type","NOTES");
+        fd.append("Date",date);
+        fd.append("Form Completed By",formCompletedBy);
+        fd.append("Submission Timestamp",timestamp);
+        fd.append("Notes",notes);
       }
 
       const res = await fetch(webAppUrl,{method:"POST",body:fd});
@@ -265,8 +268,8 @@ function App() {
       setShowSales(false);
       setShowDistributions(false);
       setShowCans(false);
-      setShowNotes(false);
       setShowOther(false);
+      setShowNotes(false);
 
     } catch(err){
       alert(err.message);
@@ -335,6 +338,7 @@ function App() {
             <input type="text" required placeholder="Your name" className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} />
           </div>
         </div>
+        
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-4">
@@ -357,7 +361,35 @@ function App() {
         {/* Sales */}
         {showSales && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
-            <h3 className="text-xl font-serif text-kaiGreen mb-3">Product Sales</h3>
+            <h3 className="text-xl font-serif text-kaiGreen mb-3 flex items-center justify-between">
+                  Product Sales
+                  <button 
+                    type="button"
+                    className="bg-kaiBurgundy hover:bg-red-700 text-white px-3 py-1 rounded-lg font-semibold shadow text-sm"
+                    onClick={async () => {
+                      if(!date){ alert("Please select a date first"); return; }
+                      try {
+                        const res = await fetch(`${webAppUrl}?action=loyverse&date=${date}`);
+                        const data = await res.json();
+                        if(!data.success) throw new Error(data.error);
+                
+                        const rows = Object.entries(data.items).map(([productName, info]) => ({
+                          productName,
+                          quantity: info.quantity
+                        }));
+                
+                        setSalesRows(rows);
+                        setTotalSales(data.totalSales);
+                        setShowSales(true);
+                
+                      } catch(err) {
+                        alert("Error fetching Loyverse sales: " + err.message);
+                      }
+                    }}
+                  >
+                    + Add Loyverse Sales
+                  </button>
+                </h3>
             {salesRows.map((r,i)=>(
               <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
                 <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeSales(i)}>✕</span>
@@ -417,19 +449,6 @@ function App() {
           {label:"Cans Location", value:"cansLocation", type:"select", options:CANS_LOCATIONS}
         ]} bg="bg-orange-50"/>}
 
-        {/* Notes */}
-        {showNotes && (
-          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
-            <h3 className="text-xl font-serif text-kaiGreen mb-3">Notes</h3>
-            <textarea 
-              placeholder="Enter notes here..." 
-              className="w-full border rounded px-3 py-2 font-sans h-32" 
-              value={notes} 
-              onChange={e=>setNotes(e.target.value)}
-            />
-          </div>
-        )}
-
         {/* Other */}
         {showOther && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
@@ -443,14 +462,125 @@ function App() {
                 <label className="block mb-1 font-medium text-gray-700">Roe Collected</label>
                 <input type="number" placeholder="Containers of Roe Collected" className="w-full border rounded px-3 py-2 font-sans" value={roeCollected} onChange={e=>setRoeCollected(e.target.value)} />
               </div>
+      
             </div>
           </div>
         )}
 
-        <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
-          {loading?"Saving…":"Save Operations Report"}
-        </button>
+      {/* Notes */}
+      {showNotes && (
+        <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+          <h3 className="text-xl font-serif text-kaiGreen mb-3">Notes</h3>
+          <textarea 
+            placeholder="Enter notes here..." 
+            className="w-full border rounded px-3 py-2 font-sans h-32" 
+            value={notes} 
+            onChange={e=>setNotes(e.target.value)}
+          />
+        </div>
+      )}
 
+{/* ================= SUMMARY BUTTON ================= */}
+<div className="mb-3">
+  <button
+    type="button" // ✅ important: prevents form submit
+    className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
+    onClick={() => setShowSummary(true)}
+  >
+    Show Summary
+  </button>
+</div>
+
+{/* ================= SUBMIT BUTTON ================= */}
+<div>
+  <button
+    disabled={loading}
+    type="submit"
+    className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg"
+  >
+    {loading ? "Saving…" : "Save Operations Report"}
+  </button>
+</div>
+
+{/* ================= SUMMARY MODAL ================= */}
+{showSummary && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
+      {/* Close button */}
+      <button 
+        type="button"
+        className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
+        onClick={() => setShowSummary(false)}
+      >
+        ✕
+      </button>
+
+      <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
+
+<pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
+{`Date: ${date || "-"}
+Form Completed By: ${formCompletedBy || "-"}
+
+--- Staff ---
+${staffRows.length > 0
+  ? staffRows.map(r =>
+      `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`
+    ).join("\n")
+  : "0"}
+
+--- Sales ---
+${salesRows.length > 0
+  ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n")
+  : "0"}
+Total Sales: ${"$"}${totalSales || 0}
+
+--- Distribution ---
+Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
+${distributionRows.length > 0
+  ? distributionRows.map(r =>
+      `Bins Distributed: ${r.binsDistributed || 0} (Source: ${r.distributionTo || "-"})`
+    ).join("\n")
+  : "Bins Distributed: 0"}
+
+--- Cans ---
+${cansRows.length > 0
+  ? cansRows.map(r =>
+      `Cans Dropped Off: ${r.cansKg || 0} KG (Location: ${r.cansLocation || "-"})`
+    ).join("\n")
+  : "Cans Dropped Off: 0 Kg"}
+
+--- Other ---
+Fish Monitored: ${fishMonitored || 0}
+Roe Collected: ${roeCollected || 0}
+
+--- Notes ---
+${notes || "None"}
+`}
+</pre>
+
+      {/* Copy button */}
+      <button
+        type="button"
+        className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
+        onClick={() => {
+          const text = `Date: ${date || "-"}\nForm Completed By: ${formCompletedBy || "-"}\n\n` +
+                       `Staff:\n${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`).join("\n") : "-"}\n\n` +
+                       `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n") : "-"}\nTotal Sales: ${totalSales || 0}\n\n` +
+                       `Distribution:\nBins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})\n${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "-"}\n\n` +
+                       `Cans:\n${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "-"}\n\n` +
+                       `Other:\nFish Monitored: ${fishMonitored || 0}\nRoe Collected: ${roeCollected || 0}\n\n` +
+                       `Notes:\n${notes || "-"}`;
+
+          navigator.clipboard.writeText(text);
+          alert("Summary copied to clipboard!");
+        }}
+      >
+        Copy Summary
+      </button>
+    </div>
+  </div>
+)}
+        
       </form>
 
       <datalist id="products">{PRODUCTS.map(p=><option key={p} value={p}/>)}</datalist>
