@@ -533,10 +533,10 @@ Total Sales: ${totalSales || 0}
 
 --- Distribution ---
 Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
-${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "-"}
+Bins Distributed: ${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "0"}
 
 --- Cans ---
-${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "-"}
+Cans Dropped off: ${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "0"}
 
 --- Other ---
 Fish Monitored: ${fishMonitored || 0}
