@@ -536,7 +536,7 @@ ${staffRows.length > 0
 ${salesRows.length > 0
   ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n")
   : "0"}
-Total Sales: $${String(totalSales || 0)}
+Total Sales: ${"$"}${totalSales || 0}
 
 --- Distribution ---
 Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
