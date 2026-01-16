@@ -385,7 +385,35 @@ function App() {
         {/* Sales */}
         {showSales && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
-            <h3 className="text-xl font-serif text-kaiGreen mb-3">Product Sales</h3>
+            <h3 className="text-xl font-serif text-kaiGreen mb-3 flex items-center justify-between">
+                  Product Sales
+                  <button 
+                    type="button"
+                    className="bg-kaiBurgundy hover:bg-red-700 text-white px-3 py-1 rounded-lg font-semibold shadow text-sm"
+                    onClick={async () => {
+                      if(!date){ alert("Please select a date first"); return; }
+                      try {
+                        const res = await fetch(`${webAppUrl}?action=loyverse&date=${date}`);
+                        const data = await res.json();
+                        if(!data.success) throw new Error(data.error);
+                
+                        const rows = Object.entries(data.items).map(([productName, info]) => ({
+                          productName,
+                          quantity: info.quantity
+                        }));
+                
+                        setSalesRows(rows);
+                        setTotalSales(data.totalSales);
+                        setShowSales(true);
+                
+                      } catch(err) {
+                        alert("Error fetching Loyverse sales: " + err.message);
+                      }
+                    }}
+                  >
+                    + Add Loyverse Sales
+                  </button>
+                </h3>
             {salesRows.map((r,i)=>(
               <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
                 <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeSales(i)}>✕</span>
