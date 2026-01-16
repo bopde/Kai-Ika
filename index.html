@@ -521,37 +521,47 @@ function App() {
       <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
 
       <pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
+<pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
 {`Date: ${date || "-"}
 Form Completed By: ${formCompletedBy || "-"}
 
 --- Staff ---
-${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`).join("\n") : "-"}
+${staffRows.length > 0
+  ? staffRows.map(r =>
+      `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`
+    ).join("\n")
+  : "0"}
 
 --- Sales ---
-${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName || "-"}, Quantity: ${r.quantity || 0}`).join("\n") : "-"}
-Total Sales: ${totalSales || 0}
+${salesRows.length > 0
+  ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n")
+  : "0"}
+Total Sales: $${totalSales || 0}
 
 --- Distribution ---
 Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
-Bins Distributed: ${distributionRows.length > 0
-  ? "\n" + distributionRows.map(r => `${r.binsDistributed || 0} (Source: ${r.distributionTo || "-"})`).join("\n")
-  : "0 (Source: -)"}
-
+${distributionRows.length > 0
+  ? distributionRows.map(r =>
+      `Bins Distributed: ${r.binsDistributed || 0} (Source: ${r.distributionTo || "-"})`
+    ).join("\n")
+  : "Bins Distributed: 0"}
 
 --- Cans ---
-Cans Dropped Off: ${cansRows.length > 0
-  ? "\n" + cansRows.map(r => `${r.cansKg || 0} KG (Location: ${r.cansLocation || "-"})`).join("\n")
-  : "0 KG (Location: -)"}
-
+${cansRows.length > 0
+  ? cansRows.map(r =>
+      `Cans Dropped Off: ${r.cansKg || 0} KG (Location: ${r.cansLocation || "-"})`
+    ).join("\n")
+  : "Cans Dropped Off: 0 Kg"}
 
 --- Other ---
 Fish Monitored: ${fishMonitored || 0}
 Roe Collected: ${roeCollected || 0}
 
 --- Notes ---
-${notes || "-"}
+${notes || "None"}
 `}
-      </pre>
+</pre>
+
 
       {/* Copy button */}
       <button
