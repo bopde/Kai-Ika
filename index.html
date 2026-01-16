@@ -482,85 +482,114 @@ function App() {
             </div>
           </div>
         )}
-    {/* SHOW SUMMARY BUTTON */}
-    <button
-      type="button"
-      className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow mb-3"
-      onClick={() => setShowSummary(true)}
-    >
-      Show Summary
-    </button>
+{/* SHOW SUMMARY BUTTON */}
+<div className="mb-3">
+  <button
+    type="button" // ✅ ensures this never triggers form submit
+    className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
+    onClick={() => setShowSummary(true)}
+  >
+    Show Summary
+  </button>
+</div>
 
 {/* SUBMIT BUTTON */}
-<button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
-  {loading?"Saving…":"Save Operations Report"}
-</button>
+<div>
+  <button
+    disabled={loading}
+    type="submit" // ✅ submit button
+    className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg"
+  >
+    {loading ? "Saving…" : "Save Operations Report"}
+  </button>
+</div>
 
-        <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
-          {loading?"Saving…":"Save Operations Report"}
-        </button>
-    {showSummary && (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-        <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
-          {/* Close button */}
-          <button 
-            className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
-            onClick={() => setShowSummary(false)}
-          >
-            ✕
-          </button>
-    
-          <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
-    
-          <pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
-            {`Date: ${date}
-    Form Completed By: ${formCompletedBy}
-    
-    --- Staff ---
-    ${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName}, Task: ${r.task}, Start: ${r.startTime}, End: ${r.endTime}`).join("\n") : "None"}
-    
-    --- Sales ---
-    ${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName}, Quantity: ${r.quantity}`).join("\n") : "None"}
-    Total Sales: ${totalSales || "0"}
-    
-    --- Distribution ---
-    Bins Collected: ${binsCollected || "0"} (Source: ${binSource})
-    ${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed}, To: ${r.distributionTo}`).join("\n") : "None"}
-    
-    --- Cans ---
-    ${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg}, Location: ${r.cansLocation}`).join("\n") : "None"}
-    
-    --- Other ---
-    Fish Monitored: ${fishMonitored || "0"}
-    Roe Collected: ${roeCollected || "0"}
-    
-    --- Notes ---
-    ${notes || "None"}
-            `}
-          </pre>
-    
-          {/* Copy button */}
-          <button
-            className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
-            onClick={() => {
-              const text = `Date: ${date}\nForm Completed By: ${formCompletedBy}\n\n` +
-                           `Staff:\n${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName}, Task: ${r.task}, Start: ${r.startTime}, End: ${r.endTime}`).join("\n") : "None"}\n\n` +
-                           `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName}, Quantity: ${r.quantity}`).join("\n") : "None"}\nTotal Sales: ${totalSales || "0"}\n\n` +
-                           `Distribution:\nBins Collected: ${binsCollected || "0"} (Source: ${binSource})\n${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed}, To: ${r.distributionTo}`).join("\n") : "None"}\n\n` +
-                           `Cans:\n${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg}, Location: ${r.cansLocation}`).join("\n") : "None"}\n\n` +
-                           `Other:\nFish Monitored: ${fishMonitored || "0"}\nRoe Collected: ${roeCollected || "0"}\n\n` +
-                           `Notes:\n${notes || "None"}`;
-    
-              navigator.clipboard.writeText(text);
-              alert("Summary copied to clipboard!");
-            }}
-          >
-            Copy Summary
-          </button>
-        </div>
-      </div>
-    )}
+{/* ================= SUMMARY BUTTON ================= */}
+<div className="mb-3">
+  <button
+    type="button" // ✅ important: prevents form submit
+    className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
+    onClick={() => setShowSummary(true)}
+  >
+    Show Summary
+  </button>
+</div>
 
+{/* ================= SUBMIT BUTTON ================= */}
+<div>
+  <button
+    disabled={loading}
+    type="submit"
+    className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg"
+  >
+    {loading ? "Saving…" : "Save Operations Report"}
+  </button>
+</div>
+
+{/* ================= SUMMARY MODAL ================= */}
+{showSummary && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
+      {/* Close button */}
+      <button 
+        type="button"
+        className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
+        onClick={() => setShowSummary(false)}
+      >
+        ✕
+      </button>
+
+      <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
+
+      <pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
+{`Date: ${date || "-"}
+Form Completed By: ${formCompletedBy || "-"}
+
+--- Staff ---
+${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`).join("\n") : "-"}
+
+--- Sales ---
+${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName || "-"}, Quantity: ${r.quantity || 0}`).join("\n") : "-"}
+Total Sales: ${totalSales || 0}
+
+--- Distribution ---
+Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
+${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "-"}
+
+--- Cans ---
+${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "-"}
+
+--- Other ---
+Fish Monitored: ${fishMonitored || 0}
+Roe Collected: ${roeCollected || 0}
+
+--- Notes ---
+${notes || "-"}
+`}
+      </pre>
+
+      {/* Copy button */}
+      <button
+        type="button"
+        className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
+        onClick={() => {
+          const text = `Date: ${date || "-"}\nForm Completed By: ${formCompletedBy || "-"}\n\n` +
+                       `Staff:\n${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`).join("\n") : "-"}\n\n` +
+                       `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName || "-"}, Quantity: ${r.quantity || 0}`).join("\n") : "-"}\nTotal Sales: ${totalSales || 0}\n\n` +
+                       `Distribution:\nBins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})\n${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "-"}\n\n` +
+                       `Cans:\n${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "-"}\n\n` +
+                       `Other:\nFish Monitored: ${fishMonitored || 0}\nRoe Collected: ${roeCollected || 0}\n\n` +
+                       `Notes:\n${notes || "-"}`;
+
+          navigator.clipboard.writeText(text);
+          alert("Summary copied to clipboard!");
+        }}
+      >
+        Copy Summary
+      </button>
+    </div>
+  </div>
+)}
         
       </form>
 
