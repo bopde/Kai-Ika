@@ -292,11 +292,6 @@ function App() {
             value={webAppUrl}
             onChange={e=>setWebAppUrl(e.target.value)}
           />
-          <button type="button" 
-            className="w-full bg-kaiBlue hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold shadow-md mb-4" 
-            onClick={() => setShowSummary(true)}> Show Summary
-          </button>
-
           <button
             className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
             onClick={()=>{ localStorage.setItem("opsWebAppUrl",webAppUrl); setConfigured(true); }}
@@ -570,7 +565,7 @@ ${notes || "None"}
         onClick={() => {
           const text = `Date: ${date || "-"}\nForm Completed By: ${formCompletedBy || "-"}\n\n` +
                        `Staff:\n${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`).join("\n") : "-"}\n\n` +
-                       `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName || "-"}, Quantity: ${r.quantity || 0}`).join("\n") : "-"}\nTotal Sales: ${totalSales || 0}\n\n` +
+                       `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n") : "-"}\nTotal Sales: ${totalSales || 0}\n\n` +
                        `Distribution:\nBins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})\n${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed || 0}, To: ${r.distributionTo || "-"}`).join("\n") : "-"}\n\n` +
                        `Cans:\n${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg || 0}, Location: ${r.cansLocation || "-"}`).join("\n") : "-"}\n\n` +
                        `Other:\nFish Monitored: ${fishMonitored || 0}\nRoe Collected: ${roeCollected || 0}\n\n` +
