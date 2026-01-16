@@ -482,6 +482,19 @@ function App() {
             </div>
           </div>
         )}
+    {/* SHOW SUMMARY BUTTON */}
+    <button
+      type="button"
+      className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow mb-3"
+      onClick={() => setShowSummary(true)}
+    >
+      Show Summary
+    </button>
+
+{/* SUBMIT BUTTON */}
+<button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
+  {loading?"Saving…":"Save Operations Report"}
+</button>
 
         <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
           {loading?"Saving…":"Save Operations Report"}
