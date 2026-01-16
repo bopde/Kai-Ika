@@ -67,6 +67,7 @@ const BIN_SOURCES = [
   "Westhaven","Hilton","Scott's","Moana"
 ];
 
+
 // ---------------------------
 // APP
 // ---------------------------
@@ -75,6 +76,7 @@ function App() {
   const [configured, setConfigured] = useState(!!localStorage.getItem("opsWebAppUrl"));
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [showSummary, setShowSummary] = useState(false);
 
   // Permanent fields
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
@@ -289,6 +291,11 @@ function App() {
             value={webAppUrl}
             onChange={e=>setWebAppUrl(e.target.value)}
           />
+          <button type="button" 
+            className="w-full bg-kaiBlue hover:bg-blue-700 text-white py-3 rounded-lg text-lg font-semibold shadow-md mb-4" 
+            onClick={() => setShowSummary(true)}> Show Summary
+          </button>
+
           <button
             className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
             onClick={()=>{ localStorage.setItem("opsWebAppUrl",webAppUrl); setConfigured(true); }}
@@ -335,39 +342,12 @@ function App() {
             <input type="text" required placeholder="Your name" className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} />
           </div>
         </div>
+        
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-4">
           <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
           <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
-          <button 
-              type="button"
-              className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
-              onClick={async () => {
-                if(!date){ alert("Please select a date first"); return; }
-                try {
-                  const res = await fetch(`${webAppUrl}?action=loyverse&date=${date}`);
-                  const data = await res.json();
-                  if(!data.success) throw new Error(data.error);
-            
-                  // Convert items object into salesRows array
-                  const rows = Object.entries(data.items).map(([productName, info]) => ({
-                    productName,
-                    quantity: info.quantity
-                  }));
-            
-                  setSalesRows(rows);
-                  setTotalSales(data.totalSales);
-                  setShowSales(true);
-            
-                } catch(err) {
-                  alert("Error fetching Loyverse sales: " + err.message);
-                }
-              }}
-            >
-              + Add Loyverse Sales
-            </button>
-
           <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Heads + Frames</button>
           <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Can Dropoff</button>
           <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
@@ -506,7 +486,69 @@ function App() {
         <button disabled={loading} type="submit" className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg">
           {loading?"Saving…":"Save Operations Report"}
         </button>
+    {showSummary && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
+          {/* Close button */}
+          <button 
+            className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
+            onClick={() => setShowSummary(false)}
+          >
+            ✕
+          </button>
+    
+          <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
+    
+          <pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
+            {`Date: ${date}
+    Form Completed By: ${formCompletedBy}
+    
+    --- Staff ---
+    ${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName}, Task: ${r.task}, Start: ${r.startTime}, End: ${r.endTime}`).join("\n") : "None"}
+    
+    --- Sales ---
+    ${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName}, Quantity: ${r.quantity}`).join("\n") : "None"}
+    Total Sales: ${totalSales || "0"}
+    
+    --- Distribution ---
+    Bins Collected: ${binsCollected || "0"} (Source: ${binSource})
+    ${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed}, To: ${r.distributionTo}`).join("\n") : "None"}
+    
+    --- Cans ---
+    ${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg}, Location: ${r.cansLocation}`).join("\n") : "None"}
+    
+    --- Other ---
+    Fish Monitored: ${fishMonitored || "0"}
+    Roe Collected: ${roeCollected || "0"}
+    
+    --- Notes ---
+    ${notes || "None"}
+            `}
+          </pre>
+    
+          {/* Copy button */}
+          <button
+            className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
+            onClick={() => {
+              const text = `Date: ${date}\nForm Completed By: ${formCompletedBy}\n\n` +
+                           `Staff:\n${staffRows.length > 0 ? staffRows.map(r => `Name: ${r.staffName}, Task: ${r.task}, Start: ${r.startTime}, End: ${r.endTime}`).join("\n") : "None"}\n\n` +
+                           `Sales:\n${salesRows.length > 0 ? salesRows.map(r => `Product: ${r.productName}, Quantity: ${r.quantity}`).join("\n") : "None"}\nTotal Sales: ${totalSales || "0"}\n\n` +
+                           `Distribution:\nBins Collected: ${binsCollected || "0"} (Source: ${binSource})\n${distributionRows.length > 0 ? distributionRows.map(r => `Bins Distributed: ${r.binsDistributed}, To: ${r.distributionTo}`).join("\n") : "None"}\n\n` +
+                           `Cans:\n${cansRows.length > 0 ? cansRows.map(r => `KG: ${r.cansKg}, Location: ${r.cansLocation}`).join("\n") : "None"}\n\n` +
+                           `Other:\nFish Monitored: ${fishMonitored || "0"}\nRoe Collected: ${roeCollected || "0"}\n\n` +
+                           `Notes:\n${notes || "None"}`;
+    
+              navigator.clipboard.writeText(text);
+              alert("Summary copied to clipboard!");
+            }}
+          >
+            Copy Summary
+          </button>
+        </div>
+      </div>
+    )}
 
+        
       </form>
 
       <datalist id="products">{PRODUCTS.map(p=><option key={p} value={p}/>)}</datalist>
