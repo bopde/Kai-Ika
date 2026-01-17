@@ -379,9 +379,6 @@ function App() {
         </div>
       )}
 
-
-      )}
-
       <form onSubmit={submit} className="space-y-4">
 
         {/* Top info */}
@@ -395,17 +392,7 @@ function App() {
             <input type="text" required placeholder="Your name" className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} />
           </div>
         </div>
-        
-
-        {/* Action Buttons */}
-        <div className="flex flex-wrap gap-3 mb-4">
-          <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
-          <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
-          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Heads + Frames</button>
-          <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Can Dropoff</button>
-          <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
-          <button type="button" onClick={addNotes} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Notes</button>
-        </div>
+      
 
         {/* Staff */}
         {showStaff && <Section title="Staff Hours" rows={staffRows} setRows={setStaffRows} removeRow={removeStaff} inputs={[
@@ -456,6 +443,7 @@ function App() {
                 </div>
               </div>
             ))}
+            
             {/* Total Sales */}
             <div className="mt-3">
               <label className="block mb-1 font-medium text-gray-700">Total Sales ($)</label>
@@ -536,6 +524,16 @@ function App() {
           />
         </div>
       )}
+
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-3 mb-4">
+          <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
+          <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
+          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Heads + Frames</button>
+          <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Can Dropoff</button>
+          <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
+          <button type="button" onClick={addNotes} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Notes</button>
+        </div>
 
 {/* ================= SUMMARY BUTTON ================= */}
 <div className="mb-3">
