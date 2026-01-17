@@ -291,7 +291,9 @@ function App() {
       if(!json.success) throw new Error(json.error);
 
       setSuccess(true);
-      setTimeout(()=>setSuccess(false),10000);
+      setTimeout(() => setShowSummary(false), 1500);
+      setTimeout(() => setSuccess(false), 10000);
+
 
       // CLEAR FORM
       setStaffRows([]);
@@ -358,7 +360,7 @@ function App() {
 
       {success && (
         <div 
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-50"
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-[60]"
           onClick={()=>setSuccess(false)}
         >
           ✓ Report saved successfully
