@@ -117,6 +117,8 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
+  const [copied, setCopied] = useState(false);
+
 
   // Permanent fields
   const [date, setDate] = useState(new Date().toISOString().slice(0,10));
@@ -292,7 +294,7 @@ function App() {
 
       setSuccess(true);
       setTimeout(() => setShowSummary(false), 1500);
-      setTimeout(() => setSuccess(false), 10000);
+      setTimeout(() => setSuccess(false), 5000);
 
 
       // CLEAR FORM
@@ -358,13 +360,26 @@ function App() {
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Operations Report</h1>
       </header>
 
+      {/* Success toast */}
       {success && (
         <div 
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-[60]"
-          onClick={()=>setSuccess(false)}
+          className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-50"
+          onClick={() => setSuccess(false)}
         >
           ✓ Report saved successfully
         </div>
+      )}
+
+      {/* Copied toast */}
+      {copied && (
+        <div
+          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiBlue text-white px-6 py-3 rounded-lg shadow-lg z-50"
+        >
+          ✓ Summary copied to clipboard
+        </div>
+      )}
+
+
       )}
 
       <form onSubmit={submit} className="space-y-4">
@@ -604,7 +619,9 @@ ${notes || "None"}
                        `Notes:\n${notes || "-"}`;
 
           navigator.clipboard.writeText(text);
-          alert("Summary copied to clipboard!");
+          setCopied(true);
+          setTimeout(() => setCopied(false), 1500);
+
         }}
       >
         Copy Summary
