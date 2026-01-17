@@ -527,20 +527,10 @@ function App() {
     className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
     onClick={() => setShowSummary(true)}
   >
-    Show Summary
+    Review and Submit
   </button>
 </div>
 
-{/* ================= SUBMIT BUTTON ================= */}
-<div>
-  <button
-    disabled={loading}
-    type="submit"
-    className="w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-4 rounded-lg text-xl font-serif font-bold shadow-lg"
-  >
-    {loading ? "Saving…" : "Save Operations Report"}
-  </button>
-</div>
 
 {/* ================= SUMMARY MODAL ================= */}
 {showSummary && (
@@ -617,9 +607,20 @@ ${notes || "None"}
       >
         Copy Summary
       </button>
+
+    {/* Submit button */}
+      <button
+        type="button"
+        disabled={loading}
+        className="mt-3 w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-3 rounded-lg text-lg font-serif font-bold shadow"
+        onClick={(e) => submit(e)}
+      >
+        {loading ? "Saving…" : "Submit Report"}
+      </button>
     </div>
   </div>
 )}
+
         
       </form>
 
