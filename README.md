@@ -94,3 +94,4 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 * Ensure your Google Apps Script web app is deployed as **“Anyone, even anonymous”** so the browser can fetch data.
 * You can mix manual sales entries with Loyverse sales; the app will combine them.
 * Local autosave keeps your progress safe if you leave the page.
+* Quantity of each product sold are catelogued by summing the quantities in the 'sales' tagged receipts from Loyverse. Total sales are from summing the total value of all of these, and subtracting the receipts. For some reason, this appears to give correct results.
