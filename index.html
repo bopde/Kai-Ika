@@ -358,7 +358,29 @@ function App() {
           className="h-20 mb-3"
         />
         <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Operations Report</h1>
-      </header>
+
+        <header className="w-full bg-kaiBurgundy text-white flex flex-col items-center py-6 shadow-lg mb-6 relative">
+  <img 
+    src="https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png"
+    alt="Kai Ika Logo"
+    className="h-20 mb-3"
+  />
+  <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Operations Report</h1>
+
+    {/* Settings Cog */}
+    <button
+      type="button"
+      className="absolute top-4 right-4 text-white hover:text-gray-300"
+      onClick={() => {
+        setConfigured(false); // reopen initial setup
+      }}
+      title="Settings"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l.7 2.148a1 1 0 00.95.69h2.36c.969 0 1.371 1.24.588 1.81l-1.91 1.387a1 1 0 00-.364 1.118l.728 2.314c.3.921-.755 1.688-1.538 1.118l-1.91-1.387a1 1 0 00-1.176 0l-1.91 1.387c-.783.57-1.838-.197-1.538-1.118l.728-2.314a1 1 0 00-.364-1.118L2.4 6.575c-.783-.57-.38-1.81.588-1.81h2.36a1 1 0 00.95-.69l.7-2.148z" />
+      </svg>
+    </button>
+  </header>
 
       {/* Success toast */}
       {success && (
