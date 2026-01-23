@@ -1,4 +1,4 @@
-## echnical details
+## Technical details
 
 This app consists of **three parts**:
 
