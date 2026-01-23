@@ -149,6 +149,15 @@ function App() {
   const [offalSource, setOffalSource] = useState(BIN_SOURCES[0]);
   const [redistributionBins, setRedistributionBins] = useState("");
   const [redistributionCollector, setRedistributionCollector] = useState(DISTRIBUTION_LOCATIONS[0]);
+  const F = {
+  ROW_TYPE: "Row Type",
+  DATE: "Date",
+  COMPLETED_BY: "Form Completed By",
+  OFFAL_BINS_COLLECTED: "Offal Bins Collected",
+  OFFAL_SOURCE: "Offal Source",
+  REDISTRIBUTION_BINS_COLLECTED: "Redistribution Bins Collected",
+  REDISTRIBUTION_COLLECTOR: "Redistribution Collector"
+};
 
 
   // Summary Page
@@ -301,23 +310,24 @@ if(binsCollected){
 
 // OFFAL
 if(offalBins){
-  fd.append("Row Type","OFFAL");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("Offal Bins Collected", offalBins || "");
-  fd.append("Offal Source", offalSource || "");
+  fd.append(F.ROW_TYPE, "OFFAL");
+  fd.append(F.DATE, date);
+  fd.append(F.COMPLETED_BY, formCompletedBy);
+  fd.append("Submission Timestamp", timestamp); // timestamp can stay like this
+  fd.append(F.OFFAL_BINS_COLLECTED, offalBins || "");
+  fd.append(F.OFFAL_SOURCE, offalSource || "");
 }
 
 // REDISTRIBUTION
 if(redistributionBins){
-  fd.append("Row Type","REDISTRIBUTION");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("Redistribution Bins Collected", redistributionBins || "");
-  fd.append("Redistribution Collector", redistributionCollector || "");
+  fd.append(F.ROW_TYPE, "REDISTRIBUTION");
+  fd.append(F.DATE, date);
+  fd.append(F.COMPLETED_BY, formCompletedBy);
+  fd.append("Submission Timestamp", timestamp);
+  fd.append(F.REDISTRIBUTION_BINS_COLLECTED, redistributionBins || "");
+  fd.append(F.REDISTRIBUTION_COLLECTOR, redistributionCollector || "");
 }
+
 
 
       // DISTRIBUTION
@@ -606,12 +616,13 @@ if(redistributionBins){
 </div>
 
 
-          {/* Offal */}
- <div className="bg-slate-50 p-3 rounded-lg">
+{/* Offal */}
+<div className="bg-slate-50 p-3 rounded-lg">
   <div className="grid md:grid-cols-2 gap-2">
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">Offal Bins Collected</label>
       <input
+        name={F.OFFAL_BINS_COLLECTED + '[]'} // ✅ send as array
         type="number"
         placeholder="Number of Offal Bins"
         className="w-full border rounded px-2 py-2 font-sans"
@@ -622,6 +633,7 @@ if(redistributionBins){
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">Offal Source</label>
       <select
+        name={F.OFFAL_SOURCE + '[]'} // ✅ send as array
         className="w-full border rounded px-2 py-2 font-sans"
         value={offalSource}
         onChange={e => setOffalSource(e.target.value)}
@@ -634,13 +646,13 @@ if(redistributionBins){
   </div>
 </div>
 
-  
-      {/* Redistribution */}
+{/* Redistribution */}
 <div className="bg-slate-50 p-3 rounded-lg">
   <div className="grid md:grid-cols-2 gap-2">
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Bins Collected</label>
       <input
+        name={F.REDISTRIBUTION_BINS_COLLECTED + '[]'} // ✅ send as array
         type="number"
         placeholder="Number of Redistribution Bins"
         className="w-full border rounded px-2 py-2 font-sans"
@@ -651,6 +663,7 @@ if(redistributionBins){
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Collector</label>
       <select
+        name={F.REDISTRIBUTION_COLLECTOR + '[]'} // ✅ send as array
         className="w-full border rounded px-2 py-2 font-sans"
         value={redistributionCollector}
         onChange={e => setRedistributionCollector(e.target.value)}
@@ -708,7 +721,7 @@ if(redistributionBins){
         <div className="flex flex-wrap gap-3 mb-4">
           <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
           <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
-          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Heads + Frames</button>
+          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Distribution or Offal</button>
           <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Can Dropoff</button>
           <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
           <button type="button" onClick={addNotes} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Notes</button>
