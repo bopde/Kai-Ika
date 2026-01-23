@@ -170,12 +170,12 @@ ${salesRows.length > 0
 Total Sales: $${totalSales || 0}
 
 --- Distribution ---
-Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
+H&F Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
 Offal Bins Collected: ${offalBins || 0} (Source: ${offalSource || "-"})
 Redistribution Bins Collected: ${redistributionBins || 0} (Collector: ${redistributionCollector || "-"})
 ${distributionRows.length > 0
   ? distributionRows.map(r =>
-      `Bins Distributed: ${r.binsDistributed || 0} (To: ${r.distributionTo || "-"})`
+      `H&F Bins Distributed: ${r.binsDistributed || 0} (Collector: ${r.distributionTo || "-"})`
     ).join("\n")
   : "Bins Distributed: 0"}
 
@@ -550,79 +550,91 @@ if(redistributionBins){
             <h3 className="text-xl font-serif text-kaiGreen mb-3">Bins</h3>
             
             {/* Bins Collection */}
-            <div className="bg-slate-50 p-3 rounded-lg">
-              <div className="grid md:grid-cols-2 gap-2">
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-gray-700">Bins Collected</label>
-                  <input type="number" placeholder="Number of Bins Collected" className="w-full border rounded px-2 py-2 font-sans" value={binsCollected} onChange={e=>setBinsCollected(e.target.value)} />
-                </div>
-                <div>
-                  <label className="block mb-1 text-sm font-medium text-gray-700">Source</label>
-                  <select className="w-full border rounded px-2 py-2 font-sans" value={binSource} onChange={e=>setBinSource(e.target.value)}>
-                    {BIN_SOURCES.map(src=><option key={src} value={src}>{src}</option>)}
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Distribution Rows */}
-            {distributionRows.map((r,i)=>(
-              <div key={i} className="bg-blue-50 p-3 rounded-lg relative">
-                <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeDistribution(i)}>✕</span>
-                <div className="grid md:grid-cols-2 gap-2">
-                  <input type="number" placeholder="Number of Bins Distributed" className="border rounded px-2 py-2 font-sans" value={r.binsDistributed} onChange={e=>setDistributionRows(distributionRows.map((row,j)=>j===i?{...row,binsDistributed:e.target.value}:row))} />
-                  <select className="border rounded px-2 py-2 font-sans" value={r.distributionTo} onChange={e=>setDistributionRows(distributionRows.map((row,j)=>j===i?{...row,distributionTo:e.target.value}:row))}>
-                    {DISTRIBUTION_LOCATIONS.map(loc=><option key={loc} value={loc}>{loc}</option>)}
-                  </select>
-                </div>
-              </div>
-            ))}
-
-          {/* Offal & Redistribution */}
-        <div className="bg-slate-50 p-3 rounded-lg mt-3 space-y-3">
-          <h4 className="font-semibold text-gray-700 mb-2">Offal & Redistribution</h4>
-          <div className="grid md:grid-cols-2 gap-2">
-            {/* Offal Bins */}
-            <div>
-              <label className="block mb-1 text-sm font-medium text-gray-700">Offal Bins Collected</label>
-              <input
-                type="number"
-                placeholder="Number of Offal Bins"
-                className="w-full border rounded px-2 py-2 font-sans"
-                value={offalBins}
-                onChange={e=>setOffalBins(e.target.value)}
-              />
-              <label className="block mt-1 mb-1 text-sm font-medium text-gray-700">Offal Source</label>
-              <select
-                className="w-full border rounded px-2 py-2 font-sans"
-                value={offalSource}
-                onChange={e=>setOffalSource(e.target.value)}
-              >
-                {BIN_SOURCES.map(src => <option key={src} value={src}>{src}</option>)}
-              </select>
-            </div>
-  
-      {/* Redistribution */}
-      <div>
-        <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Bins Collected</label>
-        <input
-          type="number"
-          placeholder="Number of Redistribution Bins"
-          className="w-full border rounded px-2 py-2 font-sans"
-          value={redistributionBins}
-          onChange={e=>setRedistributionBins(e.target.value)}
-        />
-        <label className="block mt-1 mb-1 text-sm font-medium text-gray-700">Redistribution Collector</label>
-        <select
-          className="w-full border rounded px-2 py-2 font-sans"
-          value={redistributionCollector}
-          onChange={e=>setRedistributionCollector(e.target.value)}
-        >
-          {DISTRIBUTION_LOCATIONS.map(loc => <option key={loc} value={loc}>{loc}</option>)}
-        </select>
-      </div>
+<div className="bg-slate-50 p-3 rounded-lg">
+  <div className="grid md:grid-cols-2 gap-2">
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Bins Collected</label>
+      <input
+        type="number"
+        placeholder="Number of Bins Collected"
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={binsCollected}
+        onChange={e => setBinsCollected(e.target.value)}
+      />
+    </div>
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Source</label>
+      <select
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={binSource}
+        onChange={e => setBinSource(e.target.value)}
+      >
+        {BIN_SOURCES.map(src => (
+          <option key={src} value={src}>{src}</option>
+        ))}
+      </select>
     </div>
   </div>
+</div>
+
+
+          {/* Offal */}
+ <div className="bg-slate-50 p-3 rounded-lg">
+  <div className="grid md:grid-cols-2 gap-2">
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Offal Bins Collected</label>
+      <input
+        type="number"
+        placeholder="Number of Offal Bins"
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={offalBins}
+        onChange={e => setOffalBins(e.target.value)}
+      />
+    </div>
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Offal Source</label>
+      <select
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={offalSource}
+        onChange={e => setOffalSource(e.target.value)}
+      >
+        {BIN_SOURCES.map(src => (
+          <option key={src} value={src}>{src}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+
+  
+      {/* Redistribution */}
+<div className="bg-slate-50 p-3 rounded-lg">
+  <div className="grid md:grid-cols-2 gap-2">
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Bins Collected</label>
+      <input
+        type="number"
+        placeholder="Number of Redistribution Bins"
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={redistributionBins}
+        onChange={e => setRedistributionBins(e.target.value)}
+      />
+    </div>
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Collector</label>
+      <select
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={redistributionCollector}
+        onChange={e => setRedistributionCollector(e.target.value)}
+      >
+        {DISTRIBUTION_LOCATIONS.map(loc => (
+          <option key={loc} value={loc}>{loc}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+
 
           </div>
         )}
