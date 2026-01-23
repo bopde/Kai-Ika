@@ -811,7 +811,7 @@ function Section({title, rows, setRows, removeRow, inputs, bg}) {
           >
             ✕
           </span>
-          <div className={`grid ${inputs.length > 1 ? `md:grid-cols-${inputs.length}` : "md:grid-cols-1"} gap-2`}>
+         <div className={`grid ${inputs.length === 1 ? "md:grid-cols-1" : inputs.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"} gap-2`}>
             {inputs.map(inp => {
               // SELECT
               if (inp.type === "select") {
