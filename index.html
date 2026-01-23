@@ -289,22 +289,36 @@ ${notes || "None"}`;
         fd.append("Total Sales",totalSales);
       }
 
-      // COLLECTION
-     // COLLECTION + OFFAL + REDISTRIBUTION
-    if(binsCollected || offalBins || redistributionBins){
-      fd.append("Row Type","COLLECTION");
-      fd.append("Date",date);
-      fd.append("Form Completed By",formCompletedBy);
-      fd.append("Submission Timestamp",timestamp);
-      fd.append("Bins Collected",binsCollected || "");
-      fd.append("Source",binSource || "");
-    
-      fd.append("Offal Bins Collected", offalBins || "");
-      fd.append("Offal Source", offalSource || "");
-    
-      fd.append("Redistribution Bins Collected", redistributionBins || "");
-      fd.append("Redistribution Collector", redistributionCollector || "");
-    }
+// COLLECTION
+if(binsCollected){
+  fd.append("Row Type","COLLECTION");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Bins Collected",binsCollected || "");
+  fd.append("Source",binSource || "");
+}
+
+// OFFAL
+if(offalBins){
+  fd.append("Row Type","OFFAL");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Offal Bins Collected", offalBins || "");
+  fd.append("Offal Source", offalSource || "");
+}
+
+// REDISTRIBUTION
+if(redistributionBins){
+  fd.append("Row Type","REDISTRIBUTION");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Redistribution Bins Collected", redistributionBins || "");
+  fd.append("Redistribution Collector", redistributionCollector || "");
+}
+
 
       // DISTRIBUTION
       distributionRows.forEach(r=>{
