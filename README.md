@@ -71,7 +71,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 ## Technical Details
 
 * **Frontend:** React + Tailwind + localStorage for autosave.
-* **Backend:** Google Apps Script.
+* **Backend:** Google Apps Script with key parameters stored under project settings to avoid exposure.
 * **Integration:** Uses the **Loyverse API** to pull receipts by date.
 * **Storage:** Google Sheet with rows categorized by type (STAFF, SALES, SALES_TOTAL, DISTRIBUTION, CANS, OTHER, NOTES).
 
@@ -91,7 +91,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 ## Notes
 
 * The Loyverse button only fetches data for the date selected in the form.
-* Ensure your Google Apps Script web app is deployed as **“Anyone, even anonymous”** so the browser can fetch data.
+* Deploy your Apps Script as a web app, executed as you with access for **Anyone**.
+* Keep the Apps Script URL a secret - it is the key to accessing Loyverse data and editing the sheet.
 * You can mix manual sales entries with Loyverse sales; the app will combine them.
 * Local autosave keeps your progress safe if you leave the page.
-* Quantity of each product sold are catelogued by summing the quantities in the 'sales' tagged receipts from Loyverse. Total sales are from summing the total value of all of these, and subtracting the receipts. For some reason, this appears to give correct results.
