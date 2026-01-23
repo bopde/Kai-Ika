@@ -145,6 +145,8 @@ function App() {
   const [showNotes, setShowNotes] = useState(false);
 
   // OFFAL & REDISTRBUTION FIELDS
+  const [binsDistributed, setBinsDistributed] = useState("");
+  const [distributionTo, setDistributionTo] = useState(DISTRIBUTION_LOCATIONS[0]);
   const [offalBins, setOffalBins] = useState("");
   const [offalSource, setOffalSource] = useState(BIN_SOURCES[0]);
   const [redistributionBins, setRedistributionBins] = useState("");
