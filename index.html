@@ -577,6 +577,34 @@ if(redistributionBins){
   </div>
 </div>
 
+{/* H&F Bins Distributed */}
+<div className="bg-blue-50 p-3 rounded-lg">
+  <div className="grid md:grid-cols-2 gap-2">
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Number of Bins Distributed</label>
+      <input
+        type="number"
+        placeholder="Number of Bins Distributed"
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={binsDistributed}
+        onChange={e => setBinsDistributed(e.target.value)}
+      />
+    </div>
+    <div>
+      <label className="block mb-1 text-sm font-medium text-gray-700">Distribution To</label>
+      <select
+        className="w-full border rounded px-2 py-2 font-sans"
+        value={distributionTo}
+        onChange={e => setDistributionTo(e.target.value)}
+      >
+        {DISTRIBUTION_LOCATIONS.map(loc => (
+          <option key={loc} value={loc}>{loc}</option>
+        ))}
+      </select>
+    </div>
+  </div>
+</div>
+
 
           {/* Offal */}
  <div className="bg-slate-50 p-3 rounded-lg">
