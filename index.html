@@ -661,74 +661,83 @@ ${notes || "None"}`;
 // ---------------------------
 // SECTION COMPONENT
 // ---------------------------
-function Section({title,rows,setRows,removeRow,inputs,bg}){
-  return(
+function Section({title, rows, setRows, removeRow, inputs, bg}) {
+  return (
     <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
       <h3 className="text-xl font-serif text-kaiGreen mb-3">{title}</h3>
-      {rows.map((r,i)=>(
+      {rows.map((r,i) => (
         <div key={i} className={`${bg} p-3 rounded-lg relative`}>
-          <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeRow(i)}>✕</span>
-          <div className={`grid ${inputs.length>1?`md:grid-cols-${inputs.length}`:"md:grid-cols-1"} gap-2`}>
-      {inputs.map(inp => {
-        // SELECT
-        if (inp.type === "select") {
-          return (
-            <select
-              key={inp.value}
-              value={r[inp.value]}
-              onChange={e =>
-                setRows(rows.map((row, j) =>
-                  j === i ? { ...row, [inp.value]: e.target.value } : row
-                ))
+          <span
+            className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+            onClick={() => removeRow(i)}
+          >
+            ✕
+          </span>
+          <div className={`grid ${inputs.length > 1 ? `md:grid-cols-${inputs.length}` : "md:grid-cols-1"} gap-2`}>
+            {inputs.map(inp => {
+              // SELECT
+              if (inp.type === "select") {
+                return (
+                  <select
+                    key={inp.value}
+                    value={r[inp.value]}
+                    onChange={e =>
+                      setRows(rows.map((row,j) =>
+                        j === i ? {...row, [inp.value]: e.target.value} : row
+                      ))
+                    }
+                    className="border rounded px-2 py-2 font-sans"
+                  >
+                    {inp.options.map(opt => (
+                      <option key={opt} value={opt}>{opt}</option>
+                    ))}
+                  </select>
+                );
               }
-              className="border rounded px-2 py-2 font-sans"
-            >
-              {inp.options.map(opt => (
-                <option key={opt} value={opt}>{opt}</option>
-              ))}
-            </select>
-          );
-        }
-        if (inp.type === "time") {
-          return (
-            <div key={inp.value} className="flex flex-col">
-              <span className="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
-                {inp.label}
-              </span>
-              <input
-                type="time"
-                value={r[inp.value]}
-                onChange={e =>
-                  setRows(rows.map((row, j) =>
-                    j === i ? { ...row, [inp.value]: e.target.value } : row
-                  ))
-                }
-                className="border rounded px-2 py-2 font-sans"
-              />
-            </div>
-          );
-        }
-        return (
-          <input
-            key={inp.value}
-            type={inp.type}
-            placeholder={inp.label}
-            value={r[inp.value]}
-            onChange={e =>
-              setRows(rows.map((row, j) =>
-                j === i ? { ...row, [inp.value]: e.target.value } : row
-              ))
-            }
-            className="border rounded px-2 py-2 font-sans"
-          />
-        );
-          })}
+
+              // TIME
+              if (inp.type === "time") {
+                return (
+                  <div key={inp.value} className="flex flex-col">
+                    <span className="text-[10px] uppercase tracking-wide text-gray-400 mb-1">
+                      {inp.label}
+                    </span>
+                    <input
+                      type="time"
+                      value={r[inp.value]}
+                      onChange={e =>
+                        setRows(rows.map((row,j) =>
+                          j === i ? {...row, [inp.value]: e.target.value} : row
+                        ))
+                      }
+                      className="border rounded px-2 py-2 font-sans"
+                    />
+                  </div>
+                );
+              }
+
+              // DEFAULT INPUT
+              return (
+                <input
+                  key={inp.value}
+                  type={inp.type}
+                  placeholder={inp.label}
+                  value={r[inp.value]}
+                  onChange={e =>
+                    setRows(rows.map((row,j) =>
+                      j === i ? {...row, [inp.value]: e.target.value} : row
+                    ))
+                  }
+                  className="border rounded px-2 py-2 font-sans"
+                />
+              );
+            })}
+          </div>
         </div>
       ))}
     </div>
   );
 }
-
 
 ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
 
