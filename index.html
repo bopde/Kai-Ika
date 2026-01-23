@@ -300,47 +300,46 @@ ${notes || "None"}`;
         fd.append("Total Sales",totalSales);
       }
 
-// COLLECTION
+// H&F Distribution
 if(binsCollected){
   fd.append("Row Type","COLLECTION");
   fd.append("Date",date);
   fd.append("Form Completed By",formCompletedBy);
   fd.append("Submission Timestamp",timestamp);
-  fd.append("Bins Collected",binsCollected || "");
-  fd.append("Source",binSource || "");
+  fd.append("Bins Collected",binsCollected);
+  fd.append("Source",binSource);
 }
 
-// OFFAL
+// H&F Bins Distributed
+if(binsDistributed){
+  fd.append("Row Type","DISTRIBUTION");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Bins Distributed",binsDistributed);
+  fd.append("Distribution To",distributionTo);
+}
+
+// Offal
 if(offalBins){
-  fd.append(F.ROW_TYPE, "OFFAL");
-  fd.append(F.DATE, date);
-  fd.append(F.COMPLETED_BY, formCompletedBy);
-  fd.append("Submission Timestamp", timestamp); // timestamp can stay like this
-  fd.append(F.OFFAL_BINS_COLLECTED, offalBins || "");
-  fd.append(F.OFFAL_SOURCE, offalSource || "");
+  fd.append("Row Type","OFFAL");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Offal Bins Collected",offalBins);
+  fd.append("Offal Source",offalSource);
 }
 
-// REDISTRIBUTION
+// Redistribution
 if(redistributionBins){
-  fd.append(F.ROW_TYPE, "REDISTRIBUTION");
-  fd.append(F.DATE, date);
-  fd.append(F.COMPLETED_BY, formCompletedBy);
-  fd.append("Submission Timestamp", timestamp);
-  fd.append(F.REDISTRIBUTION_BINS_COLLECTED, redistributionBins || "");
-  fd.append(F.REDISTRIBUTION_COLLECTOR, redistributionCollector || "");
+  fd.append("Row Type","REDISTRIBUTION");
+  fd.append("Date",date);
+  fd.append("Form Completed By",formCompletedBy);
+  fd.append("Submission Timestamp",timestamp);
+  fd.append("Redistribution Bins Collected",redistributionBins);
+  fd.append("Redistribution Collector",redistributionCollector);
 }
 
-
-
-      // DISTRIBUTION
-      distributionRows.forEach(r=>{
-        fd.append("Row Type","DISTRIBUTION");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Bins Distributed",r.binsDistributed||"");
-        fd.append("Distribution To",r.distributionTo||"");
-      });
 
       // CANS
       cansRows.forEach(r=>{
