@@ -311,8 +311,8 @@ if(binsCollected){
   fd.append("Date",date);
   fd.append("Form Completed By",formCompletedBy);
   fd.append("Submission Timestamp",timestamp);
-  fd.append("Bins Collected",binsCollected);
-  fd.append("Source",binSource);
+  fd.append("H&F Bins Collected",binsCollected);
+  fd.append("H&F From",binSource);
 }
 
 // H&F Bins Distributed
@@ -321,7 +321,7 @@ if(binsDistributed){
   fd.append("Date",date);
   fd.append("Form Completed By",formCompletedBy);
   fd.append("Submission Timestamp",timestamp);
-  fd.append("Bins Distributed",binsDistributed);
+  fd.append("H&F Bins Distributed",binsDistributed);
   fd.append("Distribution To",distributionTo);
 }
 
@@ -332,7 +332,7 @@ if(offalBins){
   fd.append("Form Completed By",formCompletedBy);
   fd.append("Submission Timestamp",timestamp);
   fd.append("Offal Bins Collected",offalBins);
-  fd.append("Offal Source",offalSource);
+  fd.append("Offal From",offalSource);
 }
 
 // Redistribution
