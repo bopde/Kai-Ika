@@ -285,8 +285,8 @@ ${notes || "None"}`;
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Bins Collected",binsCollected);
-        fd.append("Source",binSource);
+        fd.append("H&F Bins Collected",binsCollected);
+        fd.append("H&F Source",binSource);
       }
 
       // DISTRIBUTION
@@ -295,7 +295,7 @@ ${notes || "None"}`;
         fd.append("Date",date);
         fd.append("Form Completed By",formCompletedBy);
         fd.append("Submission Timestamp",timestamp);
-        fd.append("Bins Distributed",r.binsDistributed||"");
+        fd.append("H&F Bins Distributed",r.binsDistributed||"");
         fd.append("Distribution To",r.distributionTo||"");
       });
 
