@@ -97,7 +97,7 @@ const PRODUCTS = [
 
 const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay", "Volunteer"];
 const TASKS = ["Filleting","Distributions","Scott's","Cans","Other"];
-const DISTRIBUTION_LOCATIONS = [
+const DISTRIBUTION_SOURCES = [
   "Akeli","Donald, Cook Islands Community","Dave, Tongan Community","Fui, Samoan Community","Walk-in","Ngāti Whātua Ōrākei","Papatūānuku Kōkiri"
 ];
 const CANS_LOCATIONS = [
@@ -151,7 +151,7 @@ function App() {
 
   // OFFAL & REDISTRBUTION FIELDS
   const [binsDistributed, setBinsDistributed] = useState("");
-  const [distributionTo, setDistributionTo] = useState(DISTRIBUTION_LOCATIONS[0]);
+  const [distributionTo, setDistributionTo] = useState(DISTRIBUTION_SOURCES[0]);
   const [offalBins, setOffalBins] = useState("");
   const [offalSource, setOffalSource] = useState(OFFAL_SOURCES[0]);
   const [redistributionBins, setRedistributionBins] = useState("");
@@ -249,7 +249,7 @@ ${notes || "None"}`;
   // ---------------------------
   const addStaff = () => { setStaffRows([...staffRows, { staffName:STAFF[0], task:TASKS[0], startTime:"", endTime:"" }]); setShowStaff(true); }
   const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
-  const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_LOCATIONS[0] }]); setShowDistributions(true); }
+  const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_SOURCES[0] }]); setShowDistributions(true); }
   const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
   const addOther = () => { setShowOther(true); }
   const addNotes = () => { setShowNotes(true); }
@@ -395,7 +395,7 @@ if(redistributionBins){
       setFishMonitored("");
       setRoeCollected("");
       setBinsCollected("");
-      setBinSource("Westhaven");
+      setBinSource(BIN_SOURCES[0]);
       setShowStaff(false);
       setShowSales(false);
       setBinsDistributed("");
@@ -404,9 +404,9 @@ if(redistributionBins){
       setShowOther(false);
       setShowNotes(false);
       setOffalBins("");
-      setOffalSource(BIN_SOURCES[0]);
+      setOffalSource(OFFAL_SOURCES[0]);
       setRedistributionBins("");
-      setRedistributionCollector(DISTRIBUTION_LOCATIONS[0]);
+      setRedistributionCollector(REDIST_SOURCES[0]);
 
 
     } catch(err){
@@ -614,7 +614,7 @@ if(redistributionBins){
         value={distributionTo}
         onChange={e => setDistributionTo(e.target.value)}
       >
-        {DISTRIBUTION_LOCATIONS.map(loc => (
+        {DISTRIBUTION_SOURCES.map(loc => (
           <option key={loc} value={loc}>{loc}</option>
         ))}
       </select>
@@ -629,7 +629,6 @@ if(redistributionBins){
     <div>
       <label className="block mb-1 text-sm font-medium text-gray-700">Offal Bins Collected</label>
       <input
-        name={F.OFFAL_BINS_COLLECTED + '[]'} // ✅ send as array
         type="number"
         placeholder="Number of Offal Bins"
         className="w-full border rounded px-2 py-2 font-sans"
