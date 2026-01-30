@@ -511,17 +511,17 @@ ${notes || "None"}`;
         {/* Distribution */}
         {showDistributions && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
-            <h3 className="text-xl font-serif text-kaiGreen mb-3">Bins</h3>
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">H&F Bins Distributed</h3>
             
             {/* Bins Collection */}
             <div className="bg-slate-50 p-3 rounded-lg">
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
-                  <label className="block mb-1 text-sm font-medium text-gray-700">Bins Collected</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">H&F Bins Collected</label>
                   <input type="number" placeholder="Number of Bins Collected" className="w-full border rounded px-2 py-2 font-sans" value={binsCollected} onChange={e=>setBinsCollected(e.target.value)} />
                 </div>
                 <div>
-                  <label className="block mb-1 text-sm font-medium text-gray-700">Source</label>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">H&F From</label>
                   <select className="w-full border rounded px-2 py-2 font-sans" value={binSource} onChange={e=>setBinSource(e.target.value)}>
                     {BIN_SOURCES.map(src=><option key={src} value={src}>{src}</option>)}
                   </select>
