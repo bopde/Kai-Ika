@@ -155,7 +155,7 @@ function App() {
   const [offalBins, setOffalBins] = useState("");
   const [offalSource, setOffalSource] = useState(OFFAL_SOURCES[0]);
   const [redistributionBins, setRedistributionBins] = useState("");
-  const [redistributionCollector, setRedistributionCollector] = useState(REDIST_LOCATIONS[0]);
+  const [redistributionCollector, setRedistributionCollector] = useState(REDIST_SOURCES[0]);
   const F = {
   ROW_TYPE: "Row Type",
   DATE: "Date",
@@ -398,7 +398,7 @@ if(redistributionBins){
       setBinSource("Westhaven");
       setShowStaff(false);
       setShowSales(false);
-      setBinsDistributed(false);
+      setBinsDistributed("");
       setShowDistributions(false);
       setShowCans(false);
       setShowOther(false);
@@ -675,7 +675,7 @@ if(redistributionBins){
         value={redistributionCollector}
         onChange={e => setRedistributionCollector(e.target.value)}
       >
-        {REDIST_LOCATIONS.map(loc => (
+        {REDIST_SOURCES.map(loc => (
           <option key={loc} value={loc}>{loc}</option>
         ))}
       </select>
