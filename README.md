@@ -1,5 +1,7 @@
 # Kai Ika Operations Reporting Web App
 
+This is the basic functionality designed with the 'basic form'. It is kept for record keeping, and is currently not active. The collections form is the active one.
+
 This web app is designed to help the Kai Ika team **record daily operations**, including staff hours, sales, distributions, can drop-offs, and other activities. It also **integrates with Loyverse** to automatically fetch your daily sales data.
 
 ---
