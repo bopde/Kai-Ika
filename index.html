@@ -40,96 +40,206 @@
 <script type="text/babel">
 const { useState, useEffect } = React;
 
-// ---------------------------
-// CONSTANTS (easy to edit)
-// ---------------------------
-const PRODUCTS = [
-  "Blue Nose (LG)",
-  "Blue Nose (Sml)",
-  "Cap - Blue LegaSea",
-  "Cap - Sand LegaSea",
-  "Coke",
-  "COKE Zero",
-  "Crispy Batter",
-  "Donation",
-  "Fish other",
-  "GUR",
-  "Hapuku (LG)",
-  "Hapuku (Sml)",
-  "JOHN",
-  "KAH",
-  "Kai Ika Tee Shirt",
-  "KING Fillet",
-  "King Steaked",
-  "Knife Gill & Gut",
-  "Knife Set ($325)",
-  "Knife Single Filleting",
-  "Knife Single Skinning",
-  "Knife Single Steaking",
-  "L&P",
-  "LegaSea UV Hoodie",
-  "LegaSea UV Round Neck",
-  "LegaSea UV Zip",
-  "Mackeral",
-  "Mahi",
-  "Marlin Large",
-  "Marlin Sml",
-  "Other",
-  "Panko",
-  "Raffle Ticket 1 @ $10",
-  "Raffle Ticket X 5 ($40)",
-  "Shake n Bake",
-  "Sharpen",
-  "Sistema 3.8L",
-  "SNA",
-  "SNA Scale & Fillet",
-  "SNA Scale Gut & Gill",
-  "SNA Scale only",
-  "Sprite",
-  "TAR",
-  "Tempura Batter",
-  "TREV",
-  "Tuna Lg",
-  "Tuna Med",
-  "Tuna SM"
-];
+// ========================================================================
+// CONFIGURATION SECTION - Easy to modify all settings here
+// ========================================================================
+
+const CONFIG = {
+  // Logo
+  LOGO_URL: "https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png",
+  
+  // App Title
+  APP_TITLE: "Operations Report",
+  
+  // LocalStorage Keys
+  STORAGE_KEYS: {
+    WEB_APP_URL: "opsWebAppUrl",
+    FORM_DATA: "opsFormData"
+  },
+  
+  // Toast Display Duration (milliseconds)
+  TOAST_DURATION: {
+    SUCCESS: 5000,
+    COPIED: 1500,
+    SUMMARY_CLOSE: 1500
+  },
+  
+  // Products List
+  PRODUCTS: [
+    "Blue Nose (LG)",
+    "Blue Nose (Sml)",
+    "Cap - Blue LegaSea",
+    "Cap - Sand LegaSea",
+    "Coke",
+    "COKE Zero",
+    "Crispy Batter",
+    "Donation",
+    "Fish other",
+    "GUR",
+    "Hapuku (LG)",
+    "Hapuku (Sml)",
+    "JOHN",
+    "KAH",
+    "Kai Ika Tee Shirt",
+    "KING Fillet",
+    "King Steaked",
+    "Knife Gill & Gut",
+    "Knife Set ($325)",
+    "Knife Single Filleting",
+    "Knife Single Skinning",
+    "Knife Single Steaking",
+    "L&P",
+    "LegaSea UV Hoodie",
+    "LegaSea UV Round Neck",
+    "LegaSea UV Zip",
+    "Mackeral",
+    "Mahi",
+    "Marlin Large",
+    "Marlin Sml",
+    "Other",
+    "Panko",
+    "Raffle Ticket 1 @ $10",
+    "Raffle Ticket X 5 ($40)",
+    "Shake n Bake",
+    "Sharpen",
+    "Sistema 3.8L",
+    "SNA",
+    "SNA Scale & Fillet",
+    "SNA Scale Gut & Gill",
+    "SNA Scale only",
+    "Sprite",
+    "TAR",
+    "Tempura Batter",
+    "TREV",
+    "Tuna Lg",
+    "Tuna Med",
+    "Tuna SM"
+  ],
+  
+  // Staff Members
+  STAFF: ["Ben", "Connor", "Dave", "Opu", "Matt", "Jay", "Volunteer"],
+  
+  // Tasks
+  TASKS: ["Filleting", "Distributions", "Scott's", "Cans", "Other"],
+  
+  // Distribution Sources
+  DISTRIBUTION_SOURCES: [
+    "Akeli",
+    "Donald, Cook Islands Community",
+    "Dave, Tongan Community",
+    "Fui, Samoan Community",
+    "Walk-in",
+    "Ngāti Whātua Ōrākei",
+    "Papatūānuku Kōkiri"
+  ],
+  
+  // Cans Locations
+  CANS_LOCATIONS: [
+    "North Shore",
+    "Onehunga",
+    "Takaanini",
+    "Ōtāhuhu"
+  ],
+  
+  // Bin Collection Sources (H&F)
+  BIN_SOURCES: [
+    "Westhaven",
+    "Hilton",
+    "Scott's",
+    "Moana",
+    "Service Foods",
+    "Turkish Bread"
+  ],
+  
+  // Offal Sources
+  OFFAL_SOURCES: [
+    "OBC",
+    "Westhaven"
+  ],
+  
+  // Redistribution Sources
+  REDIST_SOURCES: [
+    "Everybody Eats",
+    "Grace Foundation",
+    "Vision West",
+    "Hoani Waititi",
+    "Fijian Methodist",
+    "Samoan Methodist",
+    "Maranga Fanau",
+    "Other"
+  ]
+};
+
+// Field Names for FormData
+const FIELD_NAMES = {
+  ROW_TYPE: "Row Type",
+  DATE: "Date",
+  COMPLETED_BY: "Form Completed By",
+  SUBMISSION_TIMESTAMP: "Submission Timestamp",
+  STAFF_NAME: "Staff Name",
+  TASK: "Task",
+  START_TIME: "Start Time",
+  END_TIME: "End Time",
+  PRODUCT_NAME: "Product Name",
+  QUANTITY_SOLD: "Quantity Sold",
+  TOTAL_SALES: "Total Sales",
+  BINS_COLLECTED: "Bins Collected",
+  SOURCE: "Source",
+  HF_BINS_DISTRIBUTED: "H&F Bins Distributed",
+  DISTRIBUTION_TO: "Distribution To",
+  OFFAL_BINS_COLLECTED: "Offal Bins Collected",
+  OFFAL_FROM: "Offal From",
+  REDISTRIBUTION_BINS_COLLECTED: "Redistribution Bins Collected",
+  REDISTRIBUTION_COLLECTOR: "Redistribution Collector",
+  CANS_KG: "Cans KG",
+  CANS_LOCATION: "Cans Location",
+  FISH_MONITORED: "Fish Monitored",
+  ROE_COLLECTED: "Roe Collected",
+  NOTES: "Notes"
+};
+
+// Row Types
+const ROW_TYPES = {
+  STAFF: "STAFF",
+  SALES: "SALES",
+  SALES_TOTAL: "SALES_TOTAL",
+  COLLECTION: "COLLECTION",
+  DISTRIBUTION: "DISTRIBUTION",
+  OFFAL: "OFFAL",
+  REDISTRIBUTION: "REDISTRIBUTION",
+  CANS: "CANS",
+  OTHER: "OTHER",
+  NOTES: "NOTES"
+};
+
+// ========================================================================
+// END CONFIGURATION SECTION
+// ========================================================================
 
 
-const STAFF = ["Ben","Connor","Dave","Opu","Matt","Jay", "Volunteer"];
-const TASKS = ["Filleting","Distributions","Scott's","Cans","Other"];
-const DISTRIBUTION_SOURCES = [
-  "Akeli","Donald, Cook Islands Community","Dave, Tongan Community","Fui, Samoan Community","Walk-in","Ngāti Whātua Ōrākei","Papatūānuku Kōkiri"
-];
-const CANS_LOCATIONS = [
-  "North Shore","Onehunga","Takaanini","Ōtāhuhu"
-];
-const BIN_SOURCES = [
-  "Westhaven","Hilton","Scott's","Moana","Service Foods","Turkish Bread"
-];
-const OFFAL_SOURCES = [
-"OBC","Westhaven"
-];
-const REDIST_SOURCES = [
-"Everybody Eats","Grace Foundation","Vision West","Hoani Waititi","Fijian Methodist","Samoan Methodist","Maranga Fanau","Other"
-];
-
 // ---------------------------
-// APP
+// MAIN APP COMPONENT
 // ---------------------------
 function App() {
-  const [webAppUrl, setWebAppUrl] = useState(localStorage.getItem("opsWebAppUrl") || "");
-  const [configured, setConfigured] = useState(!!localStorage.getItem("opsWebAppUrl"));
+  // URL Configuration
+  const [webAppUrl, setWebAppUrl] = useState(
+    localStorage.getItem(CONFIG.STORAGE_KEYS.WEB_APP_URL) || ""
+  );
+  const [configured, setConfigured] = useState(
+    !!localStorage.getItem(CONFIG.STORAGE_KEYS.WEB_APP_URL)
+  );
+
+  // UI State
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [showSummary, setShowSummary] = useState(false);
   const [copied, setCopied] = useState(false);
 
-
   // Permanent fields
-  const [date, setDate] = useState(new Date().toISOString().slice(0,10));
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
   const [formCompletedBy, setFormCompletedBy] = useState("");
 
-  // Sections
+  // Section Data
   const [staffRows, setStaffRows] = useState([]);
   const [salesRows, setSalesRows] = useState([]);
   const [distributionRows, setDistributionRows] = useState([]);
@@ -139,9 +249,9 @@ function App() {
   const [fishMonitored, setFishMonitored] = useState("");
   const [roeCollected, setRoeCollected] = useState("");
   const [binsCollected, setBinsCollected] = useState("");
-  const [binSource, setBinSource] = useState("Westhaven");
+  const [binSource, setBinSource] = useState(CONFIG.BIN_SOURCES[0]);
 
-  // Visibility
+  // Section Visibility
   const [showStaff, setShowStaff] = useState(false);
   const [showSales, setShowSales] = useState(false);
   const [showDistributions, setShowDistributions] = useState(false);
@@ -149,329 +259,546 @@ function App() {
   const [showOther, setShowOther] = useState(false);
   const [showNotes, setShowNotes] = useState(false);
 
-  // OFFAL & REDISTRBUTION FIELDS
+  // Single Entry Fields for Bins
   const [binsDistributed, setBinsDistributed] = useState("");
-  const [distributionTo, setDistributionTo] = useState(DISTRIBUTION_SOURCES[0]);
+  const [distributionTo, setDistributionTo] = useState(CONFIG.DISTRIBUTION_SOURCES[0]);
   const [offalBins, setOffalBins] = useState("");
-  const [offalSource, setOffalSource] = useState(OFFAL_SOURCES[0]);
+  const [offalSource, setOffalSource] = useState(CONFIG.OFFAL_SOURCES[0]);
   const [redistributionBins, setRedistributionBins] = useState("");
-  const [redistributionCollector, setRedistributionCollector] = useState(REDIST_SOURCES[0]);
-  const F = {
-  ROW_TYPE: "Row Type",
-  DATE: "Date",
-  COMPLETED_BY: "Form Completed By",
-  OFFAL_BINS_COLLECTED: "Offal Bins Collected",
-  OFFAL_SOURCE: "Offal Source",
-  REDISTRIBUTION_BINS_COLLECTED: "Redistribution Bins Collected",
-  REDISTRIBUTION_COLLECTOR: "Redistribution Collector"
-};
+  const [redistributionCollector, setRedistributionCollector] = useState(CONFIG.REDIST_SOURCES[0]);
 
+  // ---------------------------
+  // HELPER FUNCTIONS
+  // ---------------------------
+  
+  /**
+   * Check if a value has data (not empty, null, undefined, or zero)
+   */
+  const hasData = (value) => {
+    if (value === null || value === undefined || value === "") return false;
+    if (typeof value === "number") return value !== 0;
+    if (typeof value === "string") return value.trim() !== "" && value !== "0";
+    return true;
+  };
 
-  // Summary Page
+  /**
+   * Build summary text with conditional sections
+   */
   const buildSummaryText = () => {
-  return `Date: ${date || "-"}
+    let summary = `Date: ${date || "-"}
 Form Completed By: ${formCompletedBy || "-"}
+`;
 
+    // Staff Section
+    if (staffRows.length > 0) {
+      summary += `
 --- Staff ---
-${staffRows.length > 0
-  ? staffRows.map(r =>
-      `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`
-    ).join("\n")
-  : "0"}
+${staffRows.map(r =>
+  `Name: ${r.staffName || "-"}, Task: ${r.task || "-"}, Start: ${r.startTime || "-"}, End: ${r.endTime || "-"}`
+).join("\n")}`;
+    }
 
---- Sales ---
-${salesRows.length > 0
-  ? salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n")
-  : "0"}
-Total Sales: $${totalSales || 0}
+    // Sales Section
+    if (salesRows.length > 0 || hasData(totalSales)) {
+      summary += `
 
---- Distribution ---
-H&F Bins Collected: ${binsCollected || 0} (Source: ${binSource || "-"})
-Offal Bins Collected: ${offalBins || 0} (Source: ${offalSource || "-"})
-Redistribution Bins Collected: ${redistributionBins || 0} (Collector: ${redistributionCollector || "-"})
-${distributionRows.length > 0
-  ? distributionRows.map(r =>
-      `H&F Bins Distributed: ${r.binsDistributed || 0} (Collector: ${r.distributionTo || "-"})`
-    ).join("\n")
-  : "Bins Distributed: 0"}
+--- Sales ---`;
+      
+      if (salesRows.length > 0) {
+        summary += `
+${salesRows.map(r => `${r.productName || "-"}: ${r.quantity || 0}`).join("\n")}`;
+      }
+      
+      if (hasData(totalSales)) {
+        summary += `
+Total Sales: $${totalSales}`;
+      }
+    }
 
+    // Distribution Section
+    const hasHFCollection = hasData(binsCollected);
+    const hasHFDistribution = hasData(binsDistributed);
+    const hasOffal = hasData(offalBins);
+    const hasRedistribution = hasData(redistributionBins);
+
+    if (hasHFCollection || hasHFDistribution || hasOffal || hasRedistribution) {
+      summary += `
+
+--- Bins ---`;
+
+      if (hasHFCollection) {
+        summary += `
+H&F Bins Collected: ${binsCollected} (Source: ${binSource || "-"})`;
+      }
+
+      if (hasOffal) {
+        summary += `
+Offal Bins Collected: ${offalBins} (Source: ${offalSource || "-"})`;
+      }
+
+      if (hasRedistribution) {
+        summary += `
+Redistribution Bins Collected: ${redistributionBins} (Collector: ${redistributionCollector || "-"})`;
+      }
+
+      if (hasHFDistribution) {
+        summary += `
+H&F Bins Distributed: ${binsDistributed} (Collector: ${distributionTo || "-"})`;
+      }
+    }
+
+    // Cans Section
+    if (cansRows.length > 0) {
+      summary += `
 
 --- Cans ---
-${cansRows.length > 0
-  ? cansRows.map(r =>
-      `Cans Dropped Off: ${r.cansKg || 0} KG (Location: ${r.cansLocation || "-"})`
-    ).join("\n")
-  : "Cans Dropped Off: 0 Kg"}
+${cansRows.map(r =>
+  `Cans Dropped Off: ${r.cansKg || 0} KG (Location: ${r.cansLocation || "-"})`
+).join("\n")}`;
+    }
 
---- Other ---
-Fish Monitored: ${fishMonitored || 0}
-Roe Collected: ${roeCollected || 0}
+    // Other Section
+    if (hasData(fishMonitored) || hasData(roeCollected)) {
+      summary += `
+
+--- Other ---`;
+      
+      if (hasData(fishMonitored)) {
+        summary += `
+Fish Monitored: ${fishMonitored}`;
+      }
+      
+      if (hasData(roeCollected)) {
+        summary += `
+Roe Collected: ${roeCollected}`;
+      }
+    }
+
+    // Notes Section
+    if (hasData(notes)) {
+      summary += `
 
 --- Notes ---
-${notes || "None"}`;
-};
+${notes}`;
+    }
 
-  // Autosave
-  useEffect(() => {
-    localStorage.setItem("opsFormData", JSON.stringify({
-      date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales, notes, fishMonitored, roeCollected, binsCollected, binSource
-    }));
-  }, [date, formCompletedBy, staffRows, salesRows, distributionRows, cansRows, totalSales, notes, fishMonitored, roeCollected, binsCollected, binSource]);
+    return summary;
+  };
 
-  // Load saved
+  // ---------------------------
+  // AUTOSAVE & LOAD
+  // ---------------------------
+  
   useEffect(() => {
-    const saved = localStorage.getItem("opsFormData");
-    if(saved){
-      const data = JSON.parse(saved);
-      setDate(data.date || new Date().toISOString().slice(0,10));
-      setFormCompletedBy(data.formCompletedBy || "");
-      setStaffRows(data.staffRows || []);
-      setSalesRows(data.salesRows || []);
-      setDistributionRows(data.distributionRows || []);
-      setCansRows(data.cansRows || []);
-      setTotalSales(data.totalSales || "");
-      setNotes(data.notes || "");
-      setFishMonitored(data.fishMonitored || "");
-      setRoeCollected(data.roeCollected || "");
-      setBinsCollected(data.binsCollected || "");
-      setBinSource(data.binSource || "Westhaven");
-      setShowStaff(data.staffRows?.length > 0);
-      setShowSales(data.salesRows?.length > 0 || !!data.totalSales);
-      setShowDistributions(data.distributionRows?.length > 0 || !!data.binsCollected);
-      setShowCans(data.cansRows?.length > 0);
-      setShowOther(!!data.fishMonitored || !!data.roeCollected);
-      setShowNotes(!!data.notes);
+    const formData = {
+      date,
+      formCompletedBy,
+      staffRows,
+      salesRows,
+      distributionRows,
+      cansRows,
+      totalSales,
+      notes,
+      fishMonitored,
+      roeCollected,
+      binsCollected,
+      binSource,
+      binsDistributed,
+      distributionTo,
+      offalBins,
+      offalSource,
+      redistributionBins,
+      redistributionCollector
+    };
+    localStorage.setItem(CONFIG.STORAGE_KEYS.FORM_DATA, JSON.stringify(formData));
+  }, [
+    date,
+    formCompletedBy,
+    staffRows,
+    salesRows,
+    distributionRows,
+    cansRows,
+    totalSales,
+    notes,
+    fishMonitored,
+    roeCollected,
+    binsCollected,
+    binSource,
+    binsDistributed,
+    distributionTo,
+    offalBins,
+    offalSource,
+    redistributionBins,
+    redistributionCollector
+  ]);
+
+  useEffect(() => {
+    const saved = localStorage.getItem(CONFIG.STORAGE_KEYS.FORM_DATA);
+    if (saved) {
+      try {
+        const data = JSON.parse(saved);
+        setDate(data.date || new Date().toISOString().slice(0, 10));
+        setFormCompletedBy(data.formCompletedBy || "");
+        setStaffRows(data.staffRows || []);
+        setSalesRows(data.salesRows || []);
+        setDistributionRows(data.distributionRows || []);
+        setCansRows(data.cansRows || []);
+        setTotalSales(data.totalSales || "");
+        setNotes(data.notes || "");
+        setFishMonitored(data.fishMonitored || "");
+        setRoeCollected(data.roeCollected || "");
+        setBinsCollected(data.binsCollected || "");
+        setBinSource(data.binSource || CONFIG.BIN_SOURCES[0]);
+        setBinsDistributed(data.binsDistributed || "");
+        setDistributionTo(data.distributionTo || CONFIG.DISTRIBUTION_SOURCES[0]);
+        setOffalBins(data.offalBins || "");
+        setOffalSource(data.offalSource || CONFIG.OFFAL_SOURCES[0]);
+        setRedistributionBins(data.redistributionBins || "");
+        setRedistributionCollector(data.redistributionCollector || CONFIG.REDIST_SOURCES[0]);
+        
+        // Set visibility based on saved data
+        setShowStaff(data.staffRows?.length > 0);
+        setShowSales(data.salesRows?.length > 0 || !!data.totalSales);
+        setShowDistributions(
+          data.distributionRows?.length > 0 ||
+          !!data.binsCollected ||
+          !!data.binsDistributed ||
+          !!data.offalBins ||
+          !!data.redistributionBins
+        );
+        setShowCans(data.cansRows?.length > 0);
+        setShowOther(!!data.fishMonitored || !!data.roeCollected);
+        setShowNotes(!!data.notes);
+      } catch (err) {
+        console.error("Error loading saved data:", err);
+      }
     }
   }, []);
 
   // ---------------------------
   // ROW MANAGEMENT
   // ---------------------------
-  const addStaff = () => { setStaffRows([...staffRows, { staffName:STAFF[0], task:TASKS[0], startTime:"", endTime:"" }]); setShowStaff(true); }
-  const addSales = () => { setSalesRows([...salesRows, { productName:"", quantity:"" }]); setShowSales(true); }
-  const addDistribution = () => { setDistributionRows([...distributionRows, { binsDistributed:"", distributionTo:DISTRIBUTION_SOURCES[0] }]); setShowDistributions(true); }
-  const addCans = () => { setCansRows([...cansRows, { cansKg:"", cansLocation:CANS_LOCATIONS[0] }]); setShowCans(true); }
-  const addOther = () => { setShowOther(true); }
-  const addNotes = () => { setShowNotes(true); }
+  
+  const addStaff = () => {
+    setStaffRows([
+      ...staffRows,
+      { staffName: CONFIG.STAFF[0], task: CONFIG.TASKS[0], startTime: "", endTime: "" }
+    ]);
+    setShowStaff(true);
+  };
 
-  const removeStaff = i => setStaffRows(staffRows.filter((_,j)=>i!==j));
-  const removeSales = i => setSalesRows(salesRows.filter((_,j)=>i!==j));
-  const removeDistribution = i => setDistributionRows(distributionRows.filter((_,j)=>i!==j));
-  const removeCans = i => setCansRows(cansRows.filter((_,j)=>i!==j));
+  const addSales = () => {
+    setSalesRows([...salesRows, { productName: "", quantity: "" }]);
+    setShowSales(true);
+  };
+
+  const addDistribution = () => {
+    setShowDistributions(true);
+  };
+
+  const addCans = () => {
+    setCansRows([...cansRows, { cansKg: "", cansLocation: CONFIG.CANS_LOCATIONS[0] }]);
+    setShowCans(true);
+  };
+
+  const addOther = () => {
+    setShowOther(true);
+  };
+
+  const addNotes = () => {
+    setShowNotes(true);
+  };
+
+  const removeStaff = (i) => setStaffRows(staffRows.filter((_, j) => i !== j));
+  const removeSales = (i) => setSalesRows(salesRows.filter((_, j) => i !== j));
+  const removeCans = (i) => setCansRows(cansRows.filter((_, j) => i !== j));
 
   // ---------------------------
-  // SUBMIT
+  // LOYVERSE INTEGRATION
   // ---------------------------
-  const submit = async e => {
+  
+  const fetchLoyverseSales = async () => {
+    if (!date) {
+      alert("Please select a date first");
+      return;
+    }
+    
+    try {
+      const res = await fetch(`${webAppUrl}?action=loyverse&date=${date}`);
+      const data = await res.json();
+      
+      if (!data.success) throw new Error(data.error);
+
+      const rows = Object.entries(data.items).map(([productName, info]) => ({
+        productName,
+        quantity: info.quantity
+      }));
+
+      setSalesRows(rows);
+      setTotalSales(data.totalSales);
+      setShowSales(true);
+    } catch (err) {
+      alert("Error fetching Loyverse sales: " + err.message);
+    }
+  };
+
+  // ---------------------------
+  // FORM SUBMISSION
+  // ---------------------------
+  
+  const submit = async (e) => {
     e.preventDefault();
-    if(!date || !formCompletedBy){ alert("Date & Form Completed By required"); return; }
-    if(!webAppUrl){ alert("Please configure web app URL"); return; }
+
+    // Validation
+    if (!date || !formCompletedBy) {
+      alert("Date & Form Completed By are required");
+      return;
+    }
+
+    if (!webAppUrl) {
+      alert("Please configure web app URL");
+      return;
+    }
 
     setLoading(true);
     setSuccess(false);
 
-    try{
+    try {
       const fd = new FormData();
       const timestamp = new Date().toISOString();
 
-      // STAFF
-      staffRows.forEach(r=>{
-        fd.append("Row Type","STAFF");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Staff Name",r.staffName||"");
-        fd.append("Task",r.task||"");
-        fd.append("Start Time",r.startTime||"");
-        fd.append("End Time",r.endTime||"");
+      // STAFF rows
+      staffRows.forEach((r) => {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.STAFF);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.STAFF_NAME, r.staffName || "");
+        fd.append(FIELD_NAMES.TASK, r.task || "");
+        fd.append(FIELD_NAMES.START_TIME, r.startTime || "");
+        fd.append(FIELD_NAMES.END_TIME, r.endTime || "");
       });
 
       // SALES rows
-      salesRows.forEach(r=>{
-        fd.append("Row Type","SALES");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Product Name",r.productName||"");
-        fd.append("Quantity Sold",r.quantity||"");
+      salesRows.forEach((r) => {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.SALES);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.PRODUCT_NAME, r.productName || "");
+        fd.append(FIELD_NAMES.QUANTITY_SOLD, r.quantity || "");
       });
 
       // TOTAL SALES
-      if(totalSales){
-        fd.append("Row Type","SALES_TOTAL");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Total Sales",totalSales);
+      if (totalSales) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.SALES_TOTAL);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.TOTAL_SALES, totalSales);
       }
 
-// H&F Distribution
-if(binsCollected){
-  fd.append("Row Type","COLLECTION");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("H&F Bins Collected",binsCollected);
-  fd.append("H&F From",binSource);
-}
+      // H&F COLLECTION
+      if (binsCollected) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.COLLECTION);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.BINS_COLLECTED, binsCollected);
+        fd.append(FIELD_NAMES.SOURCE, binSource);
+      }
 
-// H&F Bins Distributed
-if(binsDistributed){
-  fd.append("Row Type","DISTRIBUTION");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("H&F Bins Distributed",binsDistributed);
-  fd.append("Distribution To",distributionTo);
-}
+      // H&F DISTRIBUTION
+      if (binsDistributed) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.DISTRIBUTION);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.HF_BINS_DISTRIBUTED, binsDistributed);
+        fd.append(FIELD_NAMES.DISTRIBUTION_TO, distributionTo);
+      }
 
-// Offal
-if(offalBins){
-  fd.append("Row Type","OFFAL");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("Offal Bins Collected",offalBins);
-  fd.append("Offal From",offalSource);
-}
+      // OFFAL
+      if (offalBins) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.OFFAL);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.OFFAL_BINS_COLLECTED, offalBins);
+        fd.append(FIELD_NAMES.OFFAL_FROM, offalSource);
+      }
 
-// Redistribution
-if(redistributionBins){
-  fd.append("Row Type","REDISTRIBUTION");
-  fd.append("Date",date);
-  fd.append("Form Completed By",formCompletedBy);
-  fd.append("Submission Timestamp",timestamp);
-  fd.append("Redistribution Bins Collected",redistributionBins);
-  fd.append("Redistribution Collector",redistributionCollector);
-}
+      // REDISTRIBUTION
+      if (redistributionBins) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.REDISTRIBUTION);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.REDISTRIBUTION_BINS_COLLECTED, redistributionBins);
+        fd.append(FIELD_NAMES.REDISTRIBUTION_COLLECTOR, redistributionCollector);
+      }
 
-
-      // CANS
-      cansRows.forEach(r=>{
-        fd.append("Row Type","CANS");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Cans KG",r.cansKg||"");
-        fd.append("Cans Location",r.cansLocation||"");
+      // CANS rows
+      cansRows.forEach((r) => {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.CANS);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.CANS_KG, r.cansKg || "");
+        fd.append(FIELD_NAMES.CANS_LOCATION, r.cansLocation || "");
       });
 
-
       // OTHER
-      if(fishMonitored || roeCollected){
-        fd.append("Row Type","OTHER");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Fish Monitored",fishMonitored||"");
-        fd.append("Roe Collected",roeCollected||"");
+      if (fishMonitored || roeCollected) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.OTHER);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.FISH_MONITORED, fishMonitored || "");
+        fd.append(FIELD_NAMES.ROE_COLLECTED, roeCollected || "");
       }
 
       // NOTES
-      if(notes){
-        fd.append("Row Type","NOTES");
-        fd.append("Date",date);
-        fd.append("Form Completed By",formCompletedBy);
-        fd.append("Submission Timestamp",timestamp);
-        fd.append("Notes",notes);
+      if (notes) {
+        fd.append(FIELD_NAMES.ROW_TYPE, ROW_TYPES.NOTES);
+        fd.append(FIELD_NAMES.DATE, date);
+        fd.append(FIELD_NAMES.COMPLETED_BY, formCompletedBy);
+        fd.append(FIELD_NAMES.SUBMISSION_TIMESTAMP, timestamp);
+        fd.append(FIELD_NAMES.NOTES, notes);
       }
 
-      const res = await fetch(webAppUrl,{method:"POST",body:fd});
+      const res = await fetch(webAppUrl, { method: "POST", body: fd });
       const json = await res.json();
-      if(!json.success) throw new Error(json.error);
+      
+      if (!json.success) throw new Error(json.error);
 
       setSuccess(true);
-      setTimeout(() => setShowSummary(false), 1500);
-      setTimeout(() => setSuccess(false), 5000);
-
+      setTimeout(() => setShowSummary(false), CONFIG.TOAST_DURATION.SUMMARY_CLOSE);
+      setTimeout(() => setSuccess(false), CONFIG.TOAST_DURATION.SUCCESS);
 
       // CLEAR FORM
-      setStaffRows([]);
-      setSalesRows([]);
-      setDistributionRows([]);
-      setCansRows([]);
-      setTotalSales("");
-      setNotes("");
-      setFishMonitored("");
-      setRoeCollected("");
-      setBinsCollected("");
-      setBinSource(BIN_SOURCES[0]);
-      setShowStaff(false);
-      setShowSales(false);
-      setBinsDistributed("");
-      setShowDistributions(false);
-      setShowCans(false);
-      setShowOther(false);
-      setShowNotes(false);
-      setOffalBins("");
-      setOffalSource(OFFAL_SOURCES[0]);
-      setRedistributionBins("");
-      setRedistributionCollector(REDIST_SOURCES[0]);
-
-
-    } catch(err){
-      alert(err.message);
-    } finally{
+      clearForm();
+    } catch (err) {
+      alert("Error submitting form: " + err.message);
+    } finally {
       setLoading(false);
     }
-  }
+  };
 
   // ---------------------------
-  // INITIAL CONFIG
+  // FORM RESET
   // ---------------------------
-  if(!configured){
-    return(
+  
+  const clearForm = () => {
+    setStaffRows([]);
+    setSalesRows([]);
+    setDistributionRows([]);
+    setCansRows([]);
+    setTotalSales("");
+    setNotes("");
+    setFishMonitored("");
+    setRoeCollected("");
+    setBinsCollected("");
+    setBinSource(CONFIG.BIN_SOURCES[0]);
+    setBinsDistributed("");
+    setDistributionTo(CONFIG.DISTRIBUTION_SOURCES[0]);
+    setOffalBins("");
+    setOffalSource(CONFIG.OFFAL_SOURCES[0]);
+    setRedistributionBins("");
+    setRedistributionCollector(CONFIG.REDIST_SOURCES[0]);
+    setShowStaff(false);
+    setShowSales(false);
+    setShowDistributions(false);
+    setShowCans(false);
+    setShowOther(false);
+    setShowNotes(false);
+  };
+
+  // ---------------------------
+  // INITIAL SETUP SCREEN
+  // ---------------------------
+  
+  if (!configured) {
+    return (
       <div className="min-h-screen flex items-center justify-center p-6">
         <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-lg">
-          <h1 className="text-3xl font-serif mb-4 text-center text-kaiBurgundy">Initial Setup</h1>
+          <h1 className="text-3xl font-serif mb-4 text-center text-kaiBurgundy">
+            Initial Setup
+          </h1>
           <input
             className="w-full border rounded px-3 py-2 mb-4 font-sans"
             placeholder="Apps Script Web App URL"
             value={webAppUrl}
-            onChange={e=>setWebAppUrl(e.target.value)}
+            onChange={(e) => setWebAppUrl(e.target.value)}
           />
           <button
             className="w-full bg-kaiBurgundy hover:bg-red-700 text-white py-2 rounded font-semibold"
-            onClick={()=>{ localStorage.setItem("opsWebAppUrl",webAppUrl); setConfigured(true); }}
-          >Save & Continue</button>
+            onClick={() => {
+              if (!webAppUrl) {
+                alert("Please enter a Web App URL");
+                return;
+              }
+              localStorage.setItem(CONFIG.STORAGE_KEYS.WEB_APP_URL, webAppUrl);
+              setConfigured(true);
+            }}
+          >
+            Save & Continue
+          </button>
         </div>
       </div>
     );
   }
 
   // ---------------------------
-  // MAIN FORM
+  // MAIN FORM RENDER
   // ---------------------------
-  return(
+  
+  return (
     <div className="max-w-6xl mx-auto p-4 md:p-8">
-    {/* Header */}
-    <header className="w-full bg-kaiBurgundy text-white flex flex-col items-center py-6 shadow-lg mb-6 relative">
-      <img 
-        src="https://raw.githubusercontent.com/bopde/Kai-Ika-report/main/KAI-IKA_log_white-on-trans01.png"
-        alt="Kai Ika Logo"
-        className="h-20 mb-3"
-      />
-      <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">Operations Report</h1>
-    
-      {/* Settings Cog */}
-      <button
-        type="button"
-        className="absolute top-4 right-4 text-white hover:text-gray-300"
-        onClick={() => {
-          setConfigured(false); // reopen initial setup
-        }}
-        title="Settings"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l.7 2.148a1 1 0 00.95.69h2.36c.969 0 1.371 1.24.588 1.81l-1.91 1.387a1 1 0 00-.364 1.118l.728 2.314c.3.921-.755 1.688-1.538 1.118l-1.91-1.387a1 1 0 00-1.176 0l-1.91 1.387c-.783.57-1.838-.197-1.538-1.118l.728-2.314a1 1 0 00-.364-1.118L2.4 6.575c-.783-.57-.38-1.81.588-1.81h2.36a1 1 0 00.95-.69l.7-2.148z" />
-        </svg>
-      </button>
-    </header>
+      {/* Header */}
+      <header className="w-full bg-kaiBurgundy text-white flex flex-col items-center py-6 shadow-lg mb-6 relative">
+        <img
+          src={CONFIG.LOGO_URL}
+          alt="Kai Ika Logo"
+          className="h-20 mb-3"
+        />
+        <h1 className="text-4xl md:text-5xl font-serif font-bold text-center">
+          {CONFIG.APP_TITLE}
+        </h1>
 
+        {/* Settings Cog */}
+        <button
+          type="button"
+          className="absolute top-4 right-4 text-white hover:text-gray-300"
+          onClick={() => setConfigured(false)}
+          title="Settings"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-6 w-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+            />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+            />
+          </svg>
+        </button>
+      </header>
 
-      {/* Success toast */}
+      {/* Success Toast */}
       {success && (
-        <div 
+        <div
           className="fixed top-16 left-1/2 transform -translate-x-1/2 bg-kaiGreen text-white px-6 py-3 rounded-lg shadow-lg cursor-pointer z-[60]"
           onClick={() => setSuccess(false)}
         >
@@ -479,323 +806,443 @@ if(redistributionBins){
         </div>
       )}
 
-      {/* Copied toast */}
+      {/* Copied Toast */}
       {copied && (
-        <div
-          className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiBlue text-white px-6 py-3 rounded-lg shadow-lg z-[60]"
-        >
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 bg-kaiBlue text-white px-6 py-3 rounded-lg shadow-lg z-[60]">
           ✓ Summary copied to clipboard
         </div>
       )}
 
       <form onSubmit={submit} className="space-y-4">
-
-        {/* Top info */}
+        {/* Top Info */}
         <div className="bg-white p-4 rounded-lg shadow-md grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date *</label>
-            <input type="date" required className="w-full border rounded px-3 py-2 font-sans" value={date} onChange={e=>setDate(e.target.value)} />
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Date *
+            </label>
+            <input
+              type="date"
+              required
+              className="w-full border rounded px-3 py-2 font-sans"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Form Completed By *</label>
-            <input type="text" required placeholder="Your name" className="w-full border rounded px-3 py-2 font-sans" value={formCompletedBy} onChange={e=>setFormCompletedBy(e.target.value)} />
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Form Completed By *
+            </label>
+            <input
+              type="text"
+              required
+              placeholder="Your name"
+              className="w-full border rounded px-3 py-2 font-sans"
+              value={formCompletedBy}
+              onChange={(e) => setFormCompletedBy(e.target.value)}
+            />
           </div>
         </div>
-      
 
-        {/* Staff */}
-        {showStaff && <Section title="Staff Hours" rows={staffRows} setRows={setStaffRows} removeRow={removeStaff} inputs={[
-          {label:"Name", value:"staffName", type:"select", options:STAFF},
-          {label:"Task", value:"task", type:"select", options:TASKS},
-          {label:"Start", value:"startTime", type:"time"},
-          {label:"End", value:"endTime", type:"time"}
-        ]} bg="bg-kaiGreen/10"/>}
+        {/* Staff Section */}
+        {showStaff && (
+          <Section
+            title="Staff Hours"
+            rows={staffRows}
+            setRows={setStaffRows}
+            removeRow={removeStaff}
+            inputs={[
+              { label: "Name", value: "staffName", type: "select", options: CONFIG.STAFF },
+              { label: "Task", value: "task", type: "select", options: CONFIG.TASKS },
+              { label: "Start", value: "startTime", type: "time" },
+              { label: "End", value: "endTime", type: "time" }
+            ]}
+            bg="bg-kaiGreen/10"
+          />
+        )}
 
-        {/* Sales */}
+        {/* Sales Section */}
         {showSales && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
             <h3 className="text-xl font-serif text-kaiGreen mb-3 flex items-center justify-between">
-                  Product Sales
-                  <button 
-                    type="button"
-                    className="bg-kaiBurgundy hover:bg-red-700 text-white px-3 py-1 rounded-lg font-semibold shadow text-sm"
-                    onClick={async () => {
-                      if(!date){ alert("Please select a date first"); return; }
-                      try {
-                        const res = await fetch(`${webAppUrl}?action=loyverse&date=${date}`);
-                        const data = await res.json();
-                        if(!data.success) throw new Error(data.error);
-                
-                        const rows = Object.entries(data.items).map(([productName, info]) => ({
-                          productName,
-                          quantity: info.quantity
-                        }));
-                
-                        setSalesRows(rows);
-                        setTotalSales(data.totalSales);
-                        setShowSales(true);
-                
-                      } catch(err) {
-                        alert("Error fetching Loyverse sales: " + err.message);
-                      }
-                    }}
-                  >
-                    + Add Loyverse Sales
-                  </button>
-                </h3>
-            {salesRows.map((r,i)=>(
+              Product Sales
+              <button
+                type="button"
+                className="bg-kaiBurgundy hover:bg-red-700 text-white px-3 py-1 rounded-lg font-semibold shadow text-sm"
+                onClick={fetchLoyverseSales}
+              >
+                + Add Loyverse Sales
+              </button>
+            </h3>
+            {salesRows.map((r, i) => (
               <div key={i} className="bg-kaiYellow/30 p-3 rounded-lg relative">
-                <span className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer" onClick={()=>removeSales(i)}>✕</span>
+                <span
+                  className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
+                  onClick={() => removeSales(i)}
+                >
+                  ✕
+                </span>
                 <div className="grid md:grid-cols-3 gap-2">
-                  <input list="products" placeholder="Product Name" className="border rounded px-2 py-2 col-span-2 font-sans" value={r.productName} onChange={e=>setSalesRows(salesRows.map((row,j)=>j===i?{...row,productName:e.target.value}:row))}/>
-                  <input type="number" placeholder="Quantity Sold" className="border rounded px-2 py-2 font-sans" value={r.quantity} onChange={e=>setSalesRows(salesRows.map((row,j)=>j===i?{...row,quantity:e.target.value}:row))}/>
+                  <input
+                    list="products"
+                    placeholder="Product Name"
+                    className="border rounded px-2 py-2 col-span-2 font-sans"
+                    value={r.productName}
+                    onChange={(e) =>
+                      setSalesRows(
+                        salesRows.map((row, j) =>
+                          j === i ? { ...row, productName: e.target.value } : row
+                        )
+                      )
+                    }
+                  />
+                  <input
+                    type="number"
+                    placeholder="Quantity Sold"
+                    className="border rounded px-2 py-2 font-sans"
+                    value={r.quantity}
+                    onChange={(e) =>
+                      setSalesRows(
+                        salesRows.map((row, j) =>
+                          j === i ? { ...row, quantity: e.target.value } : row
+                        )
+                      )
+                    }
+                  />
                 </div>
               </div>
             ))}
-            
+
             {/* Total Sales */}
             <div className="mt-3">
-              <label className="block mb-1 font-medium text-gray-700">Total Sales ($)</label>
-              <input type="number" step="0.01" inputMode="decimal" placeholder="0.00" className="w-full border rounded px-3 py-2 font-sans" value={totalSales} onChange={e=>setTotalSales(e.target.value)} />
+              <label className="block mb-1 font-medium text-gray-700">
+                Total Sales ($)
+              </label>
+              <input
+                type="number"
+                step="0.01"
+                inputMode="decimal"
+                placeholder="0.00"
+                className="w-full border rounded px-3 py-2 font-sans"
+                value={totalSales}
+                onChange={(e) => setTotalSales(e.target.value)}
+              />
             </div>
           </div>
         )}
 
-        {/* Distribution */}
+        {/* Distribution Section */}
         {showDistributions && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
             <h3 className="text-xl font-serif text-kaiGreen mb-3">Bins</h3>
-            
-            {/* Bins Collection */}
-<div className="bg-slate-50 p-3 rounded-lg">
-  <div className="grid md:grid-cols-2 gap-2">
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">H&F Bins Collected</label>
-      <input
-        type="number"
-        placeholder="Number of Bins Collected"
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={binsCollected}
-        onChange={e => setBinsCollected(e.target.value)}
-      />
-    </div>
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Collected From</label>
-      <select
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={binSource}
-        onChange={e => setBinSource(e.target.value)}
-      >
-        {BIN_SOURCES.map(src => (
-          <option key={src} value={src}>{src}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
 
-{/* H&F Bins Distributed */}
-<div className="bg-blue-50 p-3 rounded-lg">
-  <div className="grid md:grid-cols-2 gap-2">
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">H&F Bins Distributed</label>
-      <input
-        type="number"
-        placeholder="Number of Bins Distributed"
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={binsDistributed}
-        onChange={e => setBinsDistributed(e.target.value)}
-      />
-    </div>
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Distribution To</label>
-      <select
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={distributionTo}
-        onChange={e => setDistributionTo(e.target.value)}
-      >
-        {DISTRIBUTION_SOURCES.map(loc => (
-          <option key={loc} value={loc}>{loc}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
+            {/* H&F Bins Collection */}
+            <div className="bg-slate-50 p-3 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    H&F Bins Collected
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Number of Bins Collected"
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={binsCollected}
+                    onChange={(e) => setBinsCollected(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Collected From
+                  </label>
+                  <select
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={binSource}
+                    onChange={(e) => setBinSource(e.target.value)}
+                  >
+                    {CONFIG.BIN_SOURCES.map((src) => (
+                      <option key={src} value={src}>
+                        {src}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
 
+            {/* H&F Bins Distributed */}
+            <div className="bg-blue-50 p-3 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    H&F Bins Distributed
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Number of Bins Distributed"
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={binsDistributed}
+                    onChange={(e) => setBinsDistributed(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Distribution To
+                  </label>
+                  <select
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={distributionTo}
+                    onChange={(e) => setDistributionTo(e.target.value)}
+                  >
+                    {CONFIG.DISTRIBUTION_SOURCES.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
 
-{/* Offal */}
-<div className="bg-slate-50 p-3 rounded-lg">
-  <div className="grid md:grid-cols-2 gap-2">
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Offal Bins Collected</label>
-      <input
-        type="number"
-        placeholder="Number of Offal Bins"
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={offalBins}
-        onChange={e => setOffalBins(e.target.value)}
-      />
-    </div>
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Collected From</label>
-      <select
-        name={F.OFFAL_SOURCE + '[]'} // ✅ send as array
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={offalSource}
-        onChange={e => setOffalSource(e.target.value)}
-      >
-        {OFFAL_SOURCES.map(src => (
-          <option key={src} value={src}>{src}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
+            {/* Offal Bins */}
+            <div className="bg-slate-50 p-3 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Offal Bins Collected
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Number of Offal Bins"
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={offalBins}
+                    onChange={(e) => setOffalBins(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Collected From
+                  </label>
+                  <select
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={offalSource}
+                    onChange={(e) => setOffalSource(e.target.value)}
+                  >
+                    {CONFIG.OFFAL_SOURCES.map((src) => (
+                      <option key={src} value={src}>
+                        {src}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
 
-{/* Redistribution */}
-<div className="bg-slate-50 p-3 rounded-lg">
-  <div className="grid md:grid-cols-2 gap-2">
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Bins Collected</label>
-      <input
-        name={F.REDISTRIBUTION_BINS_COLLECTED + '[]'} // ✅ send as array
-        type="number"
-        placeholder="Number of Redistribution Bins"
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={redistributionBins}
-        onChange={e => setRedistributionBins(e.target.value)}
-      />
-    </div>
-    <div>
-      <label className="block mb-1 text-sm font-medium text-gray-700">Redistribution Collector</label>
-      <select
-        name={F.REDISTRIBUTION_COLLECTOR + '[]'} // ✅ send as array
-        className="w-full border rounded px-2 py-2 font-sans"
-        value={redistributionCollector}
-        onChange={e => setRedistributionCollector(e.target.value)}
-      >
-        {REDIST_SOURCES.map(loc => (
-          <option key={loc} value={loc}>{loc}</option>
-        ))}
-      </select>
-    </div>
-  </div>
-</div>
-
-
+            {/* Redistribution Bins */}
+            <div className="bg-slate-50 p-3 rounded-lg">
+              <div className="grid md:grid-cols-2 gap-2">
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Redistribution Bins Collected
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="Number of Redistribution Bins"
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={redistributionBins}
+                    onChange={(e) => setRedistributionBins(e.target.value)}
+                  />
+                </div>
+                <div>
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Redistribution Collector
+                  </label>
+                  <select
+                    className="w-full border rounded px-2 py-2 font-sans"
+                    value={redistributionCollector}
+                    onChange={(e) => setRedistributionCollector(e.target.value)}
+                  >
+                    {CONFIG.REDIST_SOURCES.map((loc) => (
+                      <option key={loc} value={loc}>
+                        {loc}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Cans */}
-        {showCans && <Section title="Cans Drop-off" rows={cansRows} setRows={setCansRows} removeRow={removeCans} inputs={[
-          {label:"KG of Cans", value:"cansKg", type:"number"},
-          {label:"Cans Location", value:"cansLocation", type:"select", options:CANS_LOCATIONS}
-        ]} bg="bg-orange-50"/>}
+        {/* Cans Section */}
+        {showCans && (
+          <Section
+            title="Cans Drop-off"
+            rows={cansRows}
+            setRows={setCansRows}
+            removeRow={removeCans}
+            inputs={[
+              { label: "KG of Cans", value: "cansKg", type: "number" },
+              { label: "Cans Location", value: "cansLocation", type: "select", options: CONFIG.CANS_LOCATIONS }
+            ]}
+            bg="bg-orange-50"
+          />
+        )}
 
-        {/* Other */}
+        {/* Other Section */}
         {showOther && (
           <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
             <h3 className="text-xl font-serif text-kaiGreen mb-3">Other</h3>
             <div className="grid md:grid-cols-2 gap-3">
               <div>
-                <label className="block mb-1 font-medium text-gray-700">Fish Monitored</label>
-                <input type="number" placeholder="Number of Fish Monitored" className="w-full border rounded px-3 py-2 font-sans" value={fishMonitored} onChange={e=>setFishMonitored(e.target.value)} />
+                <label className="block mb-1 font-medium text-gray-700">
+                  Fish Monitored
+                </label>
+                <input
+                  type="number"
+                  placeholder="Number of Fish Monitored"
+                  className="w-full border rounded px-3 py-2 font-sans"
+                  value={fishMonitored}
+                  onChange={(e) => setFishMonitored(e.target.value)}
+                />
               </div>
               <div>
-                <label className="block mb-1 font-medium text-gray-700">Roe Collected</label>
-                <input type="number" placeholder="Containers of Roe Collected" className="w-full border rounded px-3 py-2 font-sans" value={roeCollected} onChange={e=>setRoeCollected(e.target.value)} />
+                <label className="block mb-1 font-medium text-gray-700">
+                  Roe Collected
+                </label>
+                <input
+                  type="number"
+                  placeholder="Containers of Roe Collected"
+                  className="w-full border rounded px-3 py-2 font-sans"
+                  value={roeCollected}
+                  onChange={(e) => setRoeCollected(e.target.value)}
+                />
               </div>
-      
             </div>
           </div>
         )}
 
-      {/* Notes */}
-      {showNotes && (
-        <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
-          <h3 className="text-xl font-serif text-kaiGreen mb-3">Notes</h3>
-          <textarea 
-            placeholder="Enter notes here..." 
-            className="w-full border rounded px-3 py-2 font-sans h-32" 
-            value={notes} 
-            onChange={e=>setNotes(e.target.value)}
-          />
-        </div>
-      )}
+        {/* Notes Section */}
+        {showNotes && (
+          <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
+            <h3 className="text-xl font-serif text-kaiGreen mb-3">Notes</h3>
+            <textarea
+              placeholder="Enter notes here..."
+              className="w-full border rounded px-3 py-2 font-sans h-32"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </div>
+        )}
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3 mb-4">
-          <button type="button" onClick={addStaff} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Staff</button>
-          <button type="button" onClick={addSales} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Sales</button>
-          <button type="button" onClick={addDistribution} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Heads & Frames & Offal</button>
-          <button type="button" onClick={addCans} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Can Dropoff</button>
-          <button type="button" onClick={addOther} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Other</button>
-          <button type="button" onClick={addNotes} className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow">+ Add Notes</button>
+          <button
+            type="button"
+            onClick={addStaff}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Staff
+          </button>
+          <button
+            type="button"
+            onClick={addSales}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Sales
+          </button>
+          <button
+            type="button"
+            onClick={addDistribution}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Heads & Frames & Offal
+          </button>
+          <button
+            type="button"
+            onClick={addCans}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Can Dropoff
+          </button>
+          <button
+            type="button"
+            onClick={addOther}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Other
+          </button>
+          <button
+            type="button"
+            onClick={addNotes}
+            className="bg-kaiBurgundy hover:bg-red-700 text-white px-5 py-2 rounded-lg font-semibold shadow"
+          >
+            + Add Notes
+          </button>
         </div>
 
-{/* ================= SUMMARY BUTTON ================= */}
-<div className="mb-3">
-  <button
-    type="button" // ✅ important: prevents form submit
-    className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
-    onClick={() => setShowSummary(true)}
-  >
-    Review and Submit
-  </button>
-</div>
+        {/* Review and Submit Button */}
+        <div className="mb-3">
+          <button
+            type="button"
+            className="w-full bg-kaiGreen hover:bg-green-700 text-white py-3 rounded-lg text-lg font-semibold shadow"
+            onClick={() => setShowSummary(true)}
+          >
+            Review and Submit
+          </button>
+        </div>
 
+        {/* Summary Modal */}
+        {showSummary && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
+              {/* Close button */}
+              <button
+                type="button"
+                className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
+                onClick={() => setShowSummary(false)}
+              >
+                ✕
+              </button>
 
-{/* ================= SUMMARY MODAL ================= */}
-{showSummary && (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div className="bg-kaiYellow w-full max-w-3xl p-6 rounded-xl shadow-xl overflow-y-auto max-h-full relative">
-      {/* Close button */}
-      <button 
-        type="button"
-        className="absolute top-4 right-4 text-kaiBurgundy text-xl font-bold"
-        onClick={() => setShowSummary(false)}
-      >
-        ✕
-      </button>
+              <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">
+                Operations Summary
+              </h2>
 
-      <h2 className="text-2xl font-serif font-bold mb-4 text-kaiBurgundy">Operations Summary</h2>
+              <pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
+                {buildSummaryText()}
+              </pre>
 
-<pre className="whitespace-pre-wrap font-sans text-gray-800 text-sm">
-{buildSummaryText()}
-</pre>
+              {/* Copy button */}
+              <button
+                type="button"
+                className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
+                onClick={() => {
+                  navigator.clipboard.writeText(buildSummaryText());
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), CONFIG.TOAST_DURATION.COPIED);
+                }}
+              >
+                Copy Summary
+              </button>
 
-
-      {/* Copy button */}
-      <button
-        type="button"
-        className="mt-4 w-full bg-kaiGreen hover:bg-green-700 text-white py-2 rounded-lg font-semibold"
-        onClick={() => {
-        navigator.clipboard.writeText(buildSummaryText());
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }}
-      >
-        Copy Summary
-      </button>
-
-      {/* Submit button */}
-      <button
-        type="submit"
-        disabled={loading}
-        className="mt-3 w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-3 rounded-lg text-lg font-serif font-bold shadow"
-      >
-        {loading ? "Saving…" : "Submit Report"}
-      </button>
-
-    </div> 
-  </div>
-)}
-
-        
+              {/* Submit button */}
+              <button
+                type="submit"
+                disabled={loading}
+                className="mt-3 w-full bg-kaiBurgundy hover:bg-red-700 disabled:bg-gray-300 text-white py-3 rounded-lg text-lg font-serif font-bold shadow"
+              >
+                {loading ? "Saving…" : "Submit Report"}
+              </button>
+            </div>
+          </div>
+        )}
       </form>
 
-      <datalist id="products">{PRODUCTS.map(p=><option key={p} value={p}/>)}</datalist>
-      <datalist id="staff">{STAFF.map(s=><option key={s} value={s}/>)}</datalist>
+      <datalist id="products">
+        {CONFIG.PRODUCTS.map((p) => (
+          <option key={p} value={p} />
+        ))}
+      </datalist>
     </div>
   );
 }
@@ -803,11 +1250,11 @@ if(redistributionBins){
 // ---------------------------
 // SECTION COMPONENT
 // ---------------------------
-function Section({title, rows, setRows, removeRow, inputs, bg}) {
+function Section({ title, rows, setRows, removeRow, inputs, bg }) {
   return (
     <div className="bg-white p-4 rounded-lg shadow-md space-y-2">
       <h3 className="text-xl font-serif text-kaiGreen mb-3">{title}</h3>
-      {rows.map((r,i) => (
+      {rows.map((r, i) => (
         <div key={i} className={`${bg} p-3 rounded-lg relative`}>
           <span
             className="absolute -top-2 -right-2 bg-white text-gray-700 rounded-full w-6 h-6 flex items-center justify-center shadow cursor-pointer"
@@ -815,23 +1262,35 @@ function Section({title, rows, setRows, removeRow, inputs, bg}) {
           >
             ✕
           </span>
-         <div className={`grid ${inputs.length === 1 ? "md:grid-cols-1" : inputs.length === 2 ? "md:grid-cols-2" : "md:grid-cols-3"} gap-2`}>
-            {inputs.map(inp => {
+          <div
+            className={`grid ${
+              inputs.length === 1
+                ? "md:grid-cols-1"
+                : inputs.length === 2
+                ? "md:grid-cols-2"
+                : "md:grid-cols-3"
+            } gap-2`}
+          >
+            {inputs.map((inp) => {
               // SELECT
               if (inp.type === "select") {
                 return (
                   <select
                     key={inp.value}
                     value={r[inp.value]}
-                    onChange={e =>
-                      setRows(rows.map((row,j) =>
-                        j === i ? {...row, [inp.value]: e.target.value} : row
-                      ))
+                    onChange={(e) =>
+                      setRows(
+                        rows.map((row, j) =>
+                          j === i ? { ...row, [inp.value]: e.target.value } : row
+                        )
+                      )
                     }
                     className="border rounded px-2 py-2 font-sans"
                   >
-                    {inp.options.map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
+                    {inp.options.map((opt) => (
+                      <option key={opt} value={opt}>
+                        {opt}
+                      </option>
                     ))}
                   </select>
                 );
@@ -847,10 +1306,12 @@ function Section({title, rows, setRows, removeRow, inputs, bg}) {
                     <input
                       type="time"
                       value={r[inp.value]}
-                      onChange={e =>
-                        setRows(rows.map((row,j) =>
-                          j === i ? {...row, [inp.value]: e.target.value} : row
-                        ))
+                      onChange={(e) =>
+                        setRows(
+                          rows.map((row, j) =>
+                            j === i ? { ...row, [inp.value]: e.target.value } : row
+                          )
+                        )
                       }
                       className="border rounded px-2 py-2 font-sans"
                     />
@@ -865,10 +1326,12 @@ function Section({title, rows, setRows, removeRow, inputs, bg}) {
                   type={inp.type}
                   placeholder={inp.label}
                   value={r[inp.value]}
-                  onChange={e =>
-                    setRows(rows.map((row,j) =>
-                      j === i ? {...row, [inp.value]: e.target.value} : row
-                    ))
+                  onChange={(e) =>
+                    setRows(
+                      rows.map((row, j) =>
+                        j === i ? { ...row, [inp.value]: e.target.value } : row
+                      )
+                    )
                   }
                   className="border rounded px-2 py-2 font-sans"
                 />
@@ -881,8 +1344,7 @@ function Section({title, rows, setRows, removeRow, inputs, bg}) {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
-
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
 </script>
 </body>
 </html>
