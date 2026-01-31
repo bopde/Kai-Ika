@@ -184,13 +184,13 @@ const FIELD_NAMES = {
   QUANTITY_SOLD: "Quantity Sold",
   TOTAL_SALES: "Total Sales",
   BINS_COLLECTED: "H&F Bins Collected",
-  SOURCE: "H&F From",
+  SOURCE: "H&F Source",
   HF_BINS_DISTRIBUTED: "H&F Bins Distributed",
   DISTRIBUTION_TO: "Distribution To",
   OFFAL_BINS_COLLECTED: "Offal Bins Collected",
   OFFAL_FROM: "Offal Source",
-  REDISTRIBUTION_BINS_COLLECTED: "Redistribution Bins Collected",
-  REDISTRIBUTION_COLLECTOR: "Redistribution Collector",
+  REDISTRIBUTION_BINS_DISTRIBUTED: "Redistribution Bins Distributed",
+  REDISTRIBUTION_TO: "Redistribution To",
   CANS_KG: "Cans KG",
   CANS_LOCATION: "Cans Location",
   FISH_MONITORED: "Fish Monitored",
@@ -343,7 +343,7 @@ Offal Bins Collected: ${offalBins} (Source: ${offalSource || "-"})`;
 
       if (hasRedistribution) {
         summary += `
-Redistribution Bins Collected: ${redistributionBins} (Collector: ${redistributionCollector || "-"})`;
+Redistribution Bins Distributed: ${redistributionBins} (Collector: ${redistributionCollector || "-"})`;
       }
     }
 
@@ -952,7 +952,7 @@ ${notes}`;
                 </div>
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
-                    Collected From
+                    H&F Source
                   </label>
                   <select
                     className="w-full border rounded px-2 py-2 font-sans"
@@ -1020,7 +1020,7 @@ ${notes}`;
                 </div>
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
-                    Collected From
+                    Offal Source
                   </label>
                   <select
                     className="w-full border rounded px-2 py-2 font-sans"
@@ -1042,7 +1042,7 @@ ${notes}`;
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
-                    Redistribution Bins Collected
+                    Redistribution Bins Distributed
                   </label>
                   <input
                     type="number"
@@ -1054,7 +1054,7 @@ ${notes}`;
                 </div>
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
-                    Redistribution Collector
+                    Redistribution To
                   </label>
                   <select
                     className="w-full border rounded px-2 py-2 font-sans"
