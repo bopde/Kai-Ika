@@ -1,7 +1,7 @@
 function getConfig() {
   const props = PropertiesService.getScriptProperties();
   return {
-    SHEET_ID: props.getProperty('SHEET_ID'),
+    SHEET_ID: props.getProperty('SHEET_ID_dev'),
     SHEET_NAME: props.getProperty('SHEET_NAME')
   };
 }
@@ -26,10 +26,14 @@ const F = {
   QUANTITY: 'Quantity Sold',
   TOTAL_SALES: 'Total Sales',
 
-  BINS_COLLECTED: 'Bins Collected',
-  COLLECTED_FROM: 'Collected From',
-  BINS_DISTRIBUTED: 'Bins Distributed',
+  BINS_COLLECTED: 'H&F Bins Collected',
+  COLLECTED_FROM: 'H&F From',
+  BINS_DISTRIBUTED: 'H&F Bins Distributed',
   DISTRIBUTION_TO: 'Distribution To',
+  OFFAL_BINS_COLLECTED: 'Offal Bins Collected',
+  OFFAL_SOURCE: 'Offal Source',
+  REDISTRIBUTION_BINS_COLLECTED: 'Redistribution Bins Collected',
+  REDISTRIBUTION_COLLECTOR: 'Redistribution Collector',
 
   CANS_KG: 'Cans KG',
   CANS_LOCATION: 'Cans Location',
@@ -47,18 +51,17 @@ const F = {
 /**
  * Handle normal form submissions
  */
+/**
+ * Handle normal form submissions
+ */
 function doPost(e) {
   try {
-      const { SHEET_ID, SHEET_NAME } = getConfig();
-        if (!SHEET_ID || !SHEET_NAME) {
-        throw new Error('Missing SHEET_ID or SHEET_NAME in Script Properties');
-      }
+    const { SHEET_ID, SHEET_NAME } = getConfig();
+    if (!SHEET_ID || !SHEET_NAME) {
+      throw new Error('Missing SHEET_ID or SHEET_NAME in Script Properties');
+    }
 
-const sheet = SpreadsheetApp
-  .openById(SHEET_ID)
-  .getSheetByName(SHEET_NAME);
-
-
+    const sheet = SpreadsheetApp.openById(SHEET_ID).getSheetByName(SHEET_NAME);
     const params = e.parameters || {};
     const timestamp = new Date().toISOString();
 
@@ -83,18 +86,22 @@ const sheet = SpreadsheetApp
         startTime,
         endTime,
         calculateHours(startTime, endTime),
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        ''
+        '', // Product Name
+        '', // Quantity Sold
+        '', // Total Sales
+        '', // H&F bins collected
+        '', // Collected From
+        '', // H&F bins distributed
+        '', // Distributed To
+        '', // Offal discarded
+        '', // Offal source
+        '', // Redistribution bins collected
+        '', // Redistribution collector
+        '', // Cans KG
+        '', // Cans Location
+        '', // Fish Monitored
+        '', // Roe Collected
+        ''  // Notes
       ]);
     }
 
@@ -112,23 +119,11 @@ const sheet = SpreadsheetApp
         params[F.DATE]?.[i] || '',
         params[F.COMPLETED_BY]?.[i] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
+        '', '', '', '', '',
         productName,
         quantity,
         '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        ''
+        '', '', '', '', '', '', '', '', '', '', '', '', '', ''
       ]);
     }
 
@@ -142,23 +137,9 @@ const sheet = SpreadsheetApp
         params[F.DATE]?.[0] || '',
         params[F.COMPLETED_BY]?.[0] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        totalSalesValue,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        ''
+        '', '', '', '', '',
+        '', '', totalSalesValue,
+        '', '', '', '', '', '', '', '', '', '', '', '', ''
       ]);
     }
 
@@ -166,66 +147,81 @@ const sheet = SpreadsheetApp
     // COLLECTION
     // ---------------------------
     const binsCollectedValue = params[F.BINS_COLLECTED]?.[0];
-    const collectedFromValue = params['Source']?.[0];
+    const collectedFromValue = params[F.COLLECTED_FROM]?.[0];
     if (binsCollectedValue || collectedFromValue) {
       sheet.appendRow([
         'COLLECTION',
         params[F.DATE]?.[0] || '',
         params[F.COMPLETED_BY]?.[0] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
+        '', '', '', '', '',
+        '', '', '',
         binsCollectedValue || '',
         collectedFromValue || '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        ''
+        '', '', '', '', '', '', '', '', '', '', ''
       ]);
     }
 
     // ---------------------------
     // DISTRIBUTION
     // ---------------------------
-    const distCount = params[F.BINS_DISTRIBUTED]?.length || 0;
-    for (let i = 0; i < distCount; i++) {
-      const binsDistributed = params[F.BINS_DISTRIBUTED][i] || '';
-      const distributionTo = params[F.DISTRIBUTION_TO]?.[i] || '';
-      if (!binsDistributed && !distributionTo) continue;
-
+    const binsDistributed = params[F.BINS_DISTRIBUTED]?.[0];
+    const distributionTo = params[F.DISTRIBUTION_TO]?.[0];
+    if (binsDistributed || distributionTo) {
       sheet.appendRow([
         'DISTRIBUTION',
-        params[F.DATE]?.[i] || '',
-        params[F.COMPLETED_BY]?.[i] || '',
+        params[F.DATE]?.[0] || '',
+        params[F.COMPLETED_BY]?.[0] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        binsDistributed,
-        distributionTo,
-        '',
-        '',
-        '',
-        '',
-        ''
+        '', '', '', '', '',
+        '', '', '',
+        '', '',
+        binsDistributed || '',
+        distributionTo || '',
+        '', '', '', '', '', '', '', '', ''
       ]);
     }
+
+    // OFFAL
+    const offalBins = params[F.OFFAL_BINS_COLLECTED]?.[0];
+    const offalSource = params[F.OFFAL_SOURCE]?.[0];
+    if (offalBins || offalSource) {
+      sheet.appendRow([
+        'OFFAL',
+        params[F.DATE]?.[0] || '',
+        params[F.COMPLETED_BY]?.[0] || '',
+        timestamp,
+        '', '', '', '', '',
+        '', '', '',
+        '', '',
+        '', '',
+        offalBins || '',
+        offalSource || '',
+        '', ''
+      ]);
+    }
+
+    // REDISTRIBUTION
+    const redistributionBins = params[F.REDISTRIBUTION_BINS_COLLECTED]?.[0];
+    const redistributionSource = params[F.REDISTRIBUTION_COLLECTOR]?.[0];
+    if (redistributionBins || redistributionSource) {
+      sheet.appendRow([
+        'REDISTRIBUTION',
+        params[F.DATE]?.[0] || '',
+        params[F.COMPLETED_BY]?.[0] || '',
+        timestamp,
+        '', '', '', '', '',
+        '', '', '',
+        '', '',
+        '', '',
+        '', '',
+        redistributionBins || '',
+        redistributionSource || '',
+        '', '', '', '', '', ''
+      ]);
+    }
+
+
 
     // ---------------------------
     // CANS
@@ -241,23 +237,9 @@ const sheet = SpreadsheetApp
         params[F.DATE]?.[i] || '',
         params[F.COMPLETED_BY]?.[i] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        cansKg,
-        cansLocation,
-        '',
-        '',
-        ''
+        '', '', '', '', '',
+        '', '', '',
+        '', '', '', '', '', '', '', '', cansKg, cansLocation, '', '', ''
       ]);
     }
 
@@ -272,26 +254,15 @@ const sheet = SpreadsheetApp
         params[F.DATE]?.[0] || '',
         params[F.COMPLETED_BY]?.[0] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
+        '', '', '', '', '',
+        '', '', '',
+        '', '', '', '', '', '',
         fishMonitoredValue || '',
         roeCollectedValue || '',
         ''
       ]);
     }
-    
+
     // ---------------------------
     // NOTES
     // ---------------------------
@@ -302,36 +273,21 @@ const sheet = SpreadsheetApp
         params[F.DATE]?.[0] || '',
         params[F.COMPLETED_BY]?.[0] || '',
         timestamp,
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        '',
-        notesValue
+        '', '', '', '', '',
+        '', '', '',
+        '', '', '', '', '', '', '', '', '', '', '', '', notesValue
       ]);
-    }    
+    }
 
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: true }))
+    return ContentService.createTextOutput(JSON.stringify({ success: true }))
       .setMimeType(ContentService.MimeType.JSON);
 
   } catch (err) {
-    return ContentService
-      .createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
+    return ContentService.createTextOutput(JSON.stringify({ success: false, error: err.toString() }))
       .setMimeType(ContentService.MimeType.JSON);
   }
 }
+
 
 /**
  * Calculate hours between start and end time strings
