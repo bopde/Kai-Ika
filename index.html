@@ -117,10 +117,10 @@ const CONFIG = {
   ],
   
   // Staff Members
-  STAFF: ["Ben", "Connor", "Dave", "Opu", "Matt", "Jay", "Volunteer"],
+  STAFF: ["Ben", "Connor", "Dave", "Opu", "Matt", "Jay", "Xavier", "Volunteer", "Other"],
   
   // Tasks
-  TASKS: ["Filleting", "Distributions", "Scott's", "Cans", "Other"],
+  TASKS: ["Filleting", "Distributions", "Monitoring", "Coffee", "Cans", "Scott's", "Other"],
   
   // Distribution Sources
   DISTRIBUTION_SOURCES: [
@@ -153,8 +153,8 @@ const CONFIG = {
   
   // Offal Sources
   OFFAL_SOURCES: [
-    "OBC",
-    "Westhaven"
+    "Westhaven",
+    "OBC"
   ],
   
   // Redistribution Sources
@@ -331,6 +331,11 @@ Total Sales: $${totalSales}`;
 H&F Bins Collected: ${binsCollected} (Source: ${binSource || "-"})`;
       }
 
+      if (hasHFDistribution) {
+        summary += `
+H&F Bins Distributed: ${binsDistributed} (Collector: ${distributionTo || "-"})`;
+      }
+      
       if (hasOffal) {
         summary += `
 Offal Bins Collected: ${offalBins} (Source: ${offalSource || "-"})`;
@@ -339,11 +344,6 @@ Offal Bins Collected: ${offalBins} (Source: ${offalSource || "-"})`;
       if (hasRedistribution) {
         summary += `
 Redistribution Bins Collected: ${redistributionBins} (Collector: ${redistributionCollector || "-"})`;
-      }
-
-      if (hasHFDistribution) {
-        summary += `
-H&F Bins Distributed: ${binsDistributed} (Collector: ${distributionTo || "-"})`;
       }
     }
 
@@ -936,7 +936,7 @@ ${notes}`;
             <h3 className="text-xl font-serif text-kaiGreen mb-3">Bins</h3>
 
             {/* H&F Bins Collection */}
-            <div className="bg-slate-50 p-3 rounded-lg">
+            <div className="bg-orange-50 p-3 rounded-lg">
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
@@ -1038,7 +1038,7 @@ ${notes}`;
             </div>
 
             {/* Redistribution Bins */}
-            <div className="bg-slate-50 p-3 rounded-lg">
+            <div className="bg-yellow-50 p-3 rounded-lg">
               <div className="grid md:grid-cols-2 gap-2">
                 <div>
                   <label className="block mb-1 text-sm font-medium text-gray-700">
