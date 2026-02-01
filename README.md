@@ -24,7 +24,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
    * Fills your sales table automatically — no manual entry needed.
    * Works alongside manual sales entry; you can edit or add items if needed.
 
-4. **Distributions & Can Drop-offs**
+4. **Distributions, Offal, & Can Drop-offs**
 
    * Track H&F bins collected and distributed (with sources/destinations), Offal bins collected (with source), Redistribution bins collected (with collector), and kg of cans dropped off (and destination).
 
