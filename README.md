@@ -26,7 +26,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 
 4. **Distributions & Can Drop-offs**
 
-   * Track how many bins were collected or distributed, and where cans were dropped off.
+   * Track H&F bins collected and distributed (with sources/destinations), Offal bins collected (with source), Redistribution bins collected (with collector), and kg of cans dropped off (and destination).
 
 5. **Other Activities & Notes**
 
@@ -58,7 +58,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 
 3. **Submitting the Form**
 
-   * Click **Save Operations Report**.
+   * **Click Review and Submit**, then review, copy if needed, and click **Submit Report**.
    * The app sends all data (manual and Loyverse) to your Google Sheet, keeping a clear, organized log.
 
 4. **Backend (Google Apps Script)**
@@ -73,7 +73,7 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 * **Frontend:** React + Tailwind + localStorage for autosave.
 * **Backend:** Google Apps Script with key parameters stored under project settings to avoid exposure.
 * **Integration:** Uses the **Loyverse API** to pull receipts by date.
-* **Storage:** Google Sheet with rows categorized by type (STAFF, SALES, SALES_TOTAL, DISTRIBUTION, CANS, OTHER, NOTES).
+* **Storage:** Google Sheet with rows categorized by type (STAFF, SALES, SALES_TOTAL, COLLECTION, DISTRIBUTION, OFFAL, REDISTRIBUTION, CANS, OTHER, NOTES).
 
 ---
 
@@ -95,3 +95,12 @@ This web app is designed to help the Kai Ika team **record daily operations**, i
 * Keep the Apps Script URL a secret - it is the key to accessing Loyverse data and editing the sheet.
 * You can mix manual sales entries with Loyverse sales; the app will combine them.
 * Local autosave keeps your progress safe if you leave the page.
+
+--
+
+## Security
+* The Apps Script Web App URL is **not** hardcoded in the application.
+* Users must paste it in during initial setup.
+* This URL is stored in browser localStorage.
+* **Keep this URL secret** — anyone with it can submit data and access Loyverse information.
+* If the URL is compromised, redeploy the Apps Script to generate a new URL.
