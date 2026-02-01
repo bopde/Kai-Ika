@@ -90,31 +90,28 @@ If this link was already in the code (hardcoded - eg, no need to paste it in at 
 Row Type
 Date
 Form Completed By
-Timestamp
-
+Submission Timestamp
 Staff Name
 Task
 Start Time
 End Time
-Hours
-
+Hours Worked
 Product Name
-Quantity
-Sold
+Quantity Sold
 Total Sales
-
-Bins Collected
-Collected From
-
-Bins Dist
-Dist To
+H&F Bins Collected
+H&F Source
+H&F Bins Distributed
+Distribution To
+Offal Bins Collected
+Offal Source
+Redistribution Bins Distributed
+Redistribution To
 Cans KG
 Cans Location
 Fish Monitored
-Roe Collected	
+Roe Collected
 Notes
-
-```
 
 ---
 
@@ -137,8 +134,8 @@ This Apps Script code talks to the front end website and accepts the data it sub
 
 | Key | Value |
 | --- | --- |
-| `SPREADSHEET_ID` | The Google Sheet ID |
-|  `API_KEY` | Loyverse API |
+| `SPREADSHEET_ID_dev` | The Google Sheet ID |
+|  `LOYVERSE_TOKEN` | Loyverse API |
 | `SHEET_NAME` | The name of the sheet tab the data will be copied into.  |
 
 These **must not** be in the frontend. Our Loyverse API key can be found in the Loyverse back office under extensions. The Google Sheet ID is the URL code between /d/ …and… /edit.
