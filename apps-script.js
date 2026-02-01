@@ -27,13 +27,13 @@ const F = {
   TOTAL_SALES: 'Total Sales',
 
   BINS_COLLECTED: 'H&F Bins Collected',
-  COLLECTED_FROM: 'H&F From',
+  COLLECTED_FROM: 'H&F Source',
   BINS_DISTRIBUTED: 'H&F Bins Distributed',
   DISTRIBUTION_TO: 'Distribution To',
   OFFAL_BINS_COLLECTED: 'Offal Bins Collected',
   OFFAL_SOURCE: 'Offal Source',
-  REDISTRIBUTION_BINS_COLLECTED: 'Redistribution Bins Collected',
-  REDISTRIBUTION_COLLECTOR: 'Redistribution Collector',
+  REDISTRIBUTION_BINS_DISTRIBUTED: 'Redistribution Bins Distributed',
+  REDISTRIBUTION_TO: 'Redistribution To',
 
   CANS_KG: 'Cans KG',
   CANS_LOCATION: 'Cans Location',
@@ -197,13 +197,14 @@ function doPost(e) {
         '', '',
         offalBins || '',
         offalSource || '',
-        '', ''
+        '', '',
+        '','','','','',
       ]);
     }
 
     // REDISTRIBUTION
-    const redistributionBins = params[F.REDISTRIBUTION_BINS_COLLECTED]?.[0];
-    const redistributionSource = params[F.REDISTRIBUTION_COLLECTOR]?.[0];
+    const redistributionBins = params[F.REDISTRIBUTION_BINS_DISTRIBUTED]?.[0];
+    const redistributionSource = params[F.REDISTRIBUTION_TO]?.[0];
     if (redistributionBins || redistributionSource) {
       sheet.appendRow([
         'REDISTRIBUTION',
@@ -217,7 +218,7 @@ function doPost(e) {
         '', '',
         redistributionBins || '',
         redistributionSource || '',
-        '', '', '', '', '', ''
+        '', '', '', '', '', 
       ]);
     }
 
@@ -256,7 +257,8 @@ function doPost(e) {
         timestamp,
         '', '', '', '', '',
         '', '', '',
-        '', '', '', '', '', '',
+        '', '', '', '', '', '','','',
+        '','',
         fishMonitoredValue || '',
         roeCollectedValue || '',
         ''
